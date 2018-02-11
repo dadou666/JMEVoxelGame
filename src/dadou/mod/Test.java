@@ -14,7 +14,7 @@ public class Test  implements InterfaceObject{
 		Driver driver = new Driver(new Test(),8666);
 		driver.waitConnection();
 		driver.executer();
-		
+
 
 	}
 
