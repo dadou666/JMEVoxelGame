@@ -54,6 +54,7 @@ import dadou.mutator.Orientation;
 import dadou.mutator.ParcourCameraPositions;
 import dadou.mutator.ParcourGraphe;
 import dadou.mutator.Rotation;
+import dadou.parallele.GestionTraitementParallele;
 import dadou.physique.PhysiqueMonde;
 import dadou.physique.PhysiqueMutator;
 import dadou.tools.BrickEditor;
@@ -76,6 +77,7 @@ public class MondeInterfacePrive implements MutatorControler {
 	public boolean exit = false;
 
 	public MondeInterfacePublic mondeInterface;
+	public GestionTraitementParallele gestionTraitementParalle;
 	public PhysiqueMonde pm;
 	public MondeEventInterface mei;
 	public SauvegardeJoueur sauvegardeJoueur;

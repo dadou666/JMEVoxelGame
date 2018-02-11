@@ -76,6 +76,7 @@ import dadou.parallele.BeginException;
 import dadou.parallele.EndException;
 import dadou.parallele.Parallele;
 import dadou.parallele.StartException;
+import dadou.parallele.Traitement;
 import dadou.physique.PhysiqueMonde;
 import dadou.physique.PhysiqueMutator;
 import dadou.son.Emeteurs;
@@ -164,6 +165,12 @@ public class MondeInterfacePublic {
 	public int historiqueIndex() throws IOException {
 		return this.mondeInterfacePrive.historiqueIndex();
 
+	}
+	public Traitement ajouter(Runnable t) {
+		return this.mondeInterfacePrive.gestionTraitementParalle.ajouter(t);
+	}
+	public void liberer(Traitement t) {
+		this.mondeInterfacePrive.gestionTraitementParalle.liberer(t);
 	}
 
 	public void choisirKube() {

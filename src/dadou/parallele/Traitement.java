@@ -1,8 +1,8 @@
 package dadou.parallele;
 
-abstract public class Traitement {
+ public class Traitement {
 	Traitement suivant;
 	public boolean estTermine = false;
-	abstract void executer();
+	public Runnable runnable;
 
 }

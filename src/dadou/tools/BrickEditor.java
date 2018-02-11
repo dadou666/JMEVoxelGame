@@ -114,6 +114,7 @@ import dadou.ihm.Menu;
 import dadou.ihm.MenuControlleur;
 import dadou.ihm.Widget;
 import dadou.mutator.Orientation;
+import dadou.parallele.GestionTraitementParallele;
 import dadou.parallele.Parallele;
 import dadou.param.GraphicsParam;
 import dadou.tools.canon.CallbackCanonDestructionOuConstruction;
@@ -1947,6 +1948,8 @@ public class BrickEditor implements Comportement {
 			ClassNotFoundException, IOException {
 
 		mondeInterface.active = true;
+		mondeInterface.gestionTraitementParalle = new GestionTraitementParallele();
+		mondeInterface.gestionTraitementParalle.demarer();
 
 	}
 
