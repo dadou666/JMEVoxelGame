@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.NullPointerException
+	at dadou.tools.BrickEditor.chargerRessource(BrickEditor.java:1401)
+	at dadou.tools.BrickEditor.main(BrickEditor.java:194)

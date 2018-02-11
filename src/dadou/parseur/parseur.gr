@@ -1,0 +1,14 @@
+Element = ElementAvecErreur | ElementSansErreur
+ElementAvecErreur = ElementAbstract:regle '@' Chaine:erreur @'chaine attendu'
+ElementSansErreur = ElementAbstract:regle
+ElementAbstract = ElementConstante |  ElementRegleListe | ElementRegle 
+ElementConstante = chaine:valeur
+ElementRegle = symbol:nomRegle ':' symbol:variable @'variable attendu'
+ElementRegleListe = symbol:nomRegle ':' symbol:variable @'variable attendu' TypeListe:typeListe @'' chaine:separateur @'' 
+TypeListe = ListeVide | ListeNonVide
+ListeVide ='*'
+ListeNonVide ='+'
+Regle = RegleOu | RegleEt
+RegleEt = symbol:nomRegle '='  Element:elements + ''
+RegleOu = symbol:nomRegle '='  symbol:noms + '|' 
+Sys =  Regle:regles + ''
