@@ -239,6 +239,7 @@ this.privateStep();
 	public void privateStep() {
 		synchronized(this) {
 		try {
+			
 			Game.fpsMesure.calculer(() -> {
 				if (totalMutator == 0 && !this.rigidBodyDecor.isEmpty()) {
 					// Log.print(" remove rigidBody "+this.rigidBodyDecor.size()

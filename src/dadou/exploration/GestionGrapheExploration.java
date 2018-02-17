@@ -58,7 +58,14 @@ public class GestionGrapheExploration implements Serializable {
 			return;
 		}
 	}
-
+	public void enregistrerTous() {
+		while (idxEnregistrer < elements.size()) {
+		
+		this.enregistrer(elements.get(idxEnregistrer));
+		idxEnregistrer++;
+	
+		}
+	}
 	public boolean lire(String nomFichier) throws IOException {
 		File file = new File(BrickEditor.cheminRessources + "/" + nomFichier);
 		if (!file.exists()) {
