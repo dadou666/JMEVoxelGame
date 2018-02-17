@@ -250,7 +250,7 @@ this.privateStep();
 					marque = new Object();
 					
 					this.rigidBodyDecor.clear();
-					Log.print(" clear  "+this.rigidBodyDecor.size());
+					//Log.print(" clear  "+this.rigidBodyDecor.size());
 				}
 				
 				dynamicsWorld.stepSimulation(0.5f);
