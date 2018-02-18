@@ -415,6 +415,7 @@ public class Monde {
 
 				this.ajouter(p);
 				zonePorte = color;
+				
 				// piece.color = "porte";
 				return p;
 

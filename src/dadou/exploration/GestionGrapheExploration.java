@@ -586,7 +586,7 @@ public class GestionGrapheExploration implements Serializable {
 		}
 
 		racine.resetNonVisite();
-		return true;
+		return !lsOld.isEmpty();
 
 	}
 
