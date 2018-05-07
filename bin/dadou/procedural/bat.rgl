@@ -1,0 +1,25 @@
+bat_droit1_a#* MZ=LA PZ=LA MX=C
+bat_droit1_b#* MZ=LB PZ=LB PX=C
+
+
+bat_droit2_a#* MX=LA PX=LA MZ=C
+bat_droit2_b#* MX=LB PX=LB PZ=C
+
+bat_croix#* MX=C PX=C MZ=C PZ=C poid=1.6
+
+
+bat_droit1_a_porte#* MZ=LA PZ=LA PX=L MX=C poid=1.8
+bat_droit1_b_porte#* MZ=LB PZ=LB MX=L PX=C poid=1.8
+
+
+bat_droit2_a_porte#* MX=LA PX=LA PZ=L MZ=C poid=1.8
+bat_droit2_b_porte#* MX=LB PX=LB MZ=L PZ=C poid=1.8
+
+
+bat_coin1#* PX=LA PZ=LB
+bat_coin4#* PX=LB MZ=LB
+
+
+
+bat_coin2#* MX=LA PZ=LA
+bat_coin3#* MX=LB MZ=LA

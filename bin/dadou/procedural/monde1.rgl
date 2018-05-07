@@ -1,0 +1,77 @@
+croix PX=L MX=L MZ=L PZ=L poid=1.6
+tunnel_croix#* PX=L MX=L MZ=L PZ=L poid=1.6
+
+
+t1#* PX=L MX=L MZ=L poid=1.2
+t2#* PX=L MX=L PZ=L poid=1.2
+t3#* MX=L PZ=L MZ=L poid=1.2
+t4#* PX=L MZ=L PZ=L poid=1.2
+tunnel_t4#* PX=L MZ=L PZ=L poid=1.2
+
+virage1 PX=L PZ=L
+virageTunel1 PX=L PZ=L
+virage2 MX=L PZ=L
+virageTunel4 MX=L PZ=L
+virage3 MX=L MZ=L
+virageTunel3 MX=L MZ=L
+virage4 PX=L MZ=L
+tunelVirage2 PX=L MZ=L
+
+droit1 MZ=L PZ=L
+
+
+
+tunelDroit2 MZ=L PZ=L
+droit2 MX=L PX=L
+tunelDroit1 MX=L PX=L
+
+fin1Bis#* MZ=L poid=1.3
+fin2Bis#* PX=L poid=1.3
+fin3Bis#* PZ=L poid=1.3
+fin4Bis#* MX=L poid=1.3
+		
+fin1 MZ=L MY=E2
+escalier2 MZ=E2 PZ=L
+demiEscalier2 PZ=E2 PY=E2
+fin2 PX=L MY=E4
+escalier4 PX=E4 MX=L
+demiEscalier4 MX=E4 PY=E4
+fin3 PZ=L MY=E1
+escalier1 PZ=E1 MZ=L
+demiEscalier1 MZ=E1 PY=E1
+fin4 MX=L MY=E3
+escalier3 MX=E3 PX=L
+demiEscalier3 PX=E3 PY=E3
+
+
+bat_droit1_a#* MZ=LB PZ=LB 
+bat_droit2_a#* MX=LB PX=LB 
+
+
+
+
+bat_droit1_a_porte#* MX=LB PX=L  poid=1.0
+bat_droit1_b_porte#* PX=LB MX=L  poid=1.0
+
+
+bat_droit2_a_porte#* MZ=LB  PZ=L  poid=1.0
+bat_droit2_b_porte#* PZ=LB  MZ=L  poid=1.0
+
+
+bat_coin1#* PX=LB PZ=LB
+bat_coin4#* PX=LB MZ=LB
+
+
+
+bat_coin2#* MX=LB PZ=LB
+bat_coin3#* MX=LB MZ=LB
+
+
+
+
+
+
+
+
+
+
