@@ -129,7 +129,7 @@ public class FBOShadowMap {
 		
 		// GL20.GL_DRAW_BUFFER0
 		GL20.glDrawBuffers(ib);
-		Log.print("Max buffers=", GL11.glGetInteger(GL20.GL_MAX_DRAW_BUFFERS));
+	//	Log.print("Max buffers=", GL11.glGetInteger(GL20.GL_MAX_DRAW_BUFFERS));
 		OpenGLTools.exitOnGLError("KO");
 		// GL20.glDrawBuffers(ib);
 	}
