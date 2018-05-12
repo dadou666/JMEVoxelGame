@@ -268,5 +268,9 @@ public class Habillage implements Serializable {
 		}
 		return valeurs.get(nomValeur);
 	}
+	public void sauvegarder(String nom) throws FileNotFoundException, IOException {
+		SerializeTool.save(this, new File(
+				BrickEditor.cheminRessources, nom));
+	}
 
 }

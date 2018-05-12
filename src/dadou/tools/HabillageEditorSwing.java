@@ -389,8 +389,8 @@ public class HabillageEditorSwing implements Comportement,
 					Log.print(" nom = null");
 					nom = "null.hab";
 				}
-					SerializeTool.save(et.getValue().habillage, new File(
-							BrickEditor.cheminRessources, nom));
+				et.getValue().habillage.sauvegarder(nom);
+			
 				
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
