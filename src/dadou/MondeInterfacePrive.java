@@ -1626,9 +1626,13 @@ public class MondeInterfacePrive implements MutatorControler {
 			Exception {
 		ModelClasse mc = this.modelClasses.get(nomModele);
 		if (mc != null) {
-			return;
+			//mc.vbo.delete();
+			
 		}
 		mc = new ModelClasse();
+		mc.dx=dx;
+		mc.dy=dy;
+		mc.dz=dz;
 		mc.copie = couleurs;
 		mc.nomHabillage = nomHabillage;
 		mc.initBuffer(this.brickEditor.game,

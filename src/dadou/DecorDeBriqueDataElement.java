@@ -33,6 +33,7 @@ import dadou.procedural.Regles;
 import dadou.tools.BrickEditor;
 import dadou.tools.SerializeTool;
 import dadou.tools.graphics.ConfigValues;
+import terrain.Terrain;
 
 public class DecorDeBriqueDataElement implements Serializable {
 	/**
@@ -50,6 +51,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public ImageEcran imageEcran;
 	public String nomHabillage;
 	public String skyBox;
+	public Terrain terrain;
 	// public Octree<EtatOctree> octree;
 	public Map<String, Object> data = new HashMap<>();
 	public Map<String, CameraPosition> cameraPositions;
@@ -58,23 +60,48 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 	public ConfigValues configValues;
 	public Map<String, ModelInstance> modelInstances;
-	public GameEventLeaf demarer;
-	public GameEventLeaf finaliser;
-	public GameEventLeaf tomber;
-	public GameEventLeaf sautEnCours;
-	public GameEventLeaf appuyerSurClavier;
-	public GameEventLeaf selectionnerInfoJeux;
-	public GameEventLeaf arreter;
-	public GameEventLeaf tirer;
-	public GameEventLeaf entreeZoneDetectionJoueur;
-	// -----
-	public GameEventLeaf sortieZoneDetectionJoueur;
-	public GameEventLeaf finSon;
-	public GameEventLeaf boucler;
-	public GameEventLeaf collisionTire;
-	public GameEventLeaf sortieMonde;
-	public GameEventLeaf finTireSansCollision;
-	public GameEventLeaf finParcourGroupeCameraPosition;
+
+	public int ajouterParcelTerrain() {
+		if (terrain == null) {
+			return 0;
+		}
+		int r=0;
+		int elementTaille = decorInfo.elementTaille;
+
+		float fElementTaille = elementTaille;
+		int dim = terrain.dim ;
+		float m = fElementTaille*(float) Math.pow(2, decorInfo.niveau - 1);
+		for (int px = 0; px < dim - 1; px++) {
+			for (int pz = 0; pz < dim - 1; pz++) {
+
+				int h00 = terrain.grille[px][pz];
+				int h10 = terrain.grille[px + 1][pz];
+				int h01 = terrain.grille[px][pz + 1];
+				int h11 = terrain.grille[px + 1][pz + 1];
+				int h00z = h00 / elementTaille;
+				int h10z = h10 / elementTaille;
+				int h11z = h11 / elementTaille;
+				int h01z = h01 / elementTaille;
+				int ux = px / elementTaille;
+				int uz = pz / elementTaille;
+				int hMin = Math.min(Math.min(h00z, h11z), Math.min(h01z, h10z));
+				ElementDecor ed = this.getElementDecor(ux, hMin, uz);
+
+			
+
+				if (ed.pt == null) {
+					ed.pt = new ParcelTerrain(m, terrain.maxValue,ux,hMin,uz,elementTaille);
+					r++;
+
+				}
+
+			
+
+			}
+
+		}
+		return r;
+	}
 
 	public void finParcourGroupeCameraPosition(MondeInterfacePrive i) {
 		try {
@@ -194,8 +221,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public Arbre<String> creerArbreCameraPosition() {
 		Arbre<String> r = new Arbre<String>(null);
 		r.nom = "camera";
-		for (Map.Entry<String, GroupeCameraPosition> e : this
-				.groupeCameraPositions().entrySet()) {
+		for (Map.Entry<String, GroupeCameraPosition> e : this.groupeCameraPositions().entrySet()) {
 			GroupeCameraPosition gcp = e.getValue();
 			for (String nom : gcp.noms) {
 				String tmp[] = nom.split("\\$");
@@ -212,8 +238,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 				if (chemin.length == 1) {
 					r.ajouter(chemin[0]);
 				} else {
-					r.ajouter(Arrays.copyOfRange(chemin, 0, chemin.length - 1),
-							chemin[chemin.length - 1]);
+					r.ajouter(Arrays.copyOfRange(chemin, 0, chemin.length - 1), chemin[chemin.length - 1]);
 
 				}
 			}
@@ -222,8 +247,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 	}
 
-	public void sautEnCours(MondeInterfacePrive i, boolean sautForce,
-			float hauteurSaut) {
+	public void sautEnCours(MondeInterfacePrive i, boolean sautForce, float hauteurSaut) {
 		MondeEventInterface mei = i.mei;
 		if (mei != null) {
 			mei.sautEnCours(sautForce, hauteurSaut);
@@ -247,13 +271,11 @@ public class DecorDeBriqueDataElement implements Serializable {
 			return Color.BLACK;
 		}
 
-		return this.elementsDecor[px][py][pz].lireCouleur(elementTaille, ux,
-				uy, uz);
+		return this.elementsDecor[px][py][pz].lireCouleur(elementTaille, ux, uy, uz);
 
 	}
 
-	public void ecrireCouleur(int x, int y, int z, Color color)
-			throws CouleurErreur {
+	public void ecrireCouleur(int x, int y, int z, Color color) throws CouleurErreur {
 		int elementTaille = decorInfo.elementTaille;
 		int px = x / elementTaille;
 		int py = y / elementTaille;
@@ -299,8 +321,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 			groupeCameraPositions = new HashMap<>();
 			if (this.cameraPositions != null) {
-				for (Map.Entry<String, CameraPosition> cp : this.cameraPositions
-						.entrySet()) {
+				for (Map.Entry<String, CameraPosition> cp : this.cameraPositions.entrySet()) {
 					GroupeCameraPosition g = new GroupeCameraPosition();
 					g.noms.add(cp.getKey());
 					groupeCameraPositions.put(cp.getKey(), g);
@@ -459,10 +480,8 @@ public class DecorDeBriqueDataElement implements Serializable {
 			}
 		}
 		if (!g.noms.isEmpty()) {
-			CameraPosition lastCp = this.cameraPositions.get(g.noms.get(g.noms
-					.size() - 1));
-			if (cp.translation.equals(lastCp.translation)
-					&& cp.rotationX.equals(lastCp.rotationX)
+			CameraPosition lastCp = this.cameraPositions.get(g.noms.get(g.noms.size() - 1));
+			if (cp.translation.equals(lastCp.translation) && cp.rotationX.equals(lastCp.rotationX)
 					&& cp.rotationY.equals(lastCp.rotationY)) {
 				return false;
 			}
@@ -555,8 +574,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 		}
 	}
 
-	public void sauvegarder(String nomFichier) throws FileNotFoundException,
-			IOException {
+	public void sauvegarder(String nomFichier) throws FileNotFoundException, IOException {
 
 		String nomFichierComplet = (new File(nomFichier)).getAbsolutePath();
 		SerializeTool.save(this, nomFichierComplet);
@@ -590,10 +608,9 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 	}
 
-	static public DecorDeBriqueDataElement creer(int niveau, int elementTaille,
-			String nomFichier) throws FileNotFoundException, IOException {
-		DecorDeBriqueDataElement elt = new DecorDeBriqueDataElement(niveau,
-				elementTaille);
+	static public DecorDeBriqueDataElement creer(int niveau, int elementTaille, String nomFichier)
+			throws FileNotFoundException, IOException {
+		DecorDeBriqueDataElement elt = new DecorDeBriqueDataElement(niveau, elementTaille);
 		elt.sauvegarder(nomFichier);
 		return elt;
 
@@ -612,8 +629,8 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 	}
 
-	static public void ajouter(Regles rgl, ModelClasse mc, int ix, int iy,
-			int iz, DecorDeBriqueDataElement dbe) throws CouleurErreur {
+	static public void ajouter(Regles rgl, ModelClasse mc, int ix, int iy, int iz, DecorDeBriqueDataElement dbe)
+			throws CouleurErreur {
 		ElementDecor ed = dbe.getElementDecor(ix, iy, iz);
 		if (mc.copie != null) {
 
@@ -641,7 +658,8 @@ public class DecorDeBriqueDataElement implements Serializable {
 		}
 
 	}
-	static public DescriptionKube verifierRegles(Regles rgl,DecorDeBriqueData decorDeBriqueData)
+
+	static public DescriptionKube verifierRegles(Regles rgl, DecorDeBriqueData decorDeBriqueData)
 			throws ModelClasseInexistant, DescriptionKubeInvalide {
 
 		DescriptionKube descKube = null;
@@ -663,18 +681,15 @@ public class DecorDeBriqueDataElement implements Serializable {
 		return descKube;
 
 	}
-	static public void genererDecor(Regles rgl, MondeGenere mg,
-			String cheminRessources, String nomMonde, PartFunc pf)
-			throws FileNotFoundException, ClassNotFoundException, IOException,
-			ModelClasseInexistant, DescriptionKubeInvalide, InvalidePos,
-			InvalidValue, CouleurErreur, ErreurRegle {
-		DecorDeBriqueData decorDeBriqueData = (DecorDeBriqueData) SerializeTool
-				.load(cheminRessources + "/base.bin");
 
-		DescriptionKube descKube = verifierRegles(rgl,decorDeBriqueData);
+	static public void genererDecor(Regles rgl, MondeGenere mg, String cheminRessources, String nomMonde, PartFunc pf)
+			throws FileNotFoundException, ClassNotFoundException, IOException, ModelClasseInexistant,
+			DescriptionKubeInvalide, InvalidePos, InvalidValue, CouleurErreur, ErreurRegle {
+		DecorDeBriqueData decorDeBriqueData = (DecorDeBriqueData) SerializeTool.load(cheminRessources + "/base.bin");
 
-		int dim = (int) Math.pow(2, BrickEditor.niveau)
-				* BrickEditor.elementTaille;
+		DescriptionKube descKube = verifierRegles(rgl, decorDeBriqueData);
+
+		int dim = (int) Math.pow(2, BrickEditor.niveau) * BrickEditor.elementTaille;
 		int dx = mg.dx;
 		;
 		int dy = mg.dy;
@@ -684,8 +699,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 		 * if (dx != mg.dx || dy != mg.dy || dz != mg.dz) { return; }
 		 */
 
-		DecorDeBriqueDataElement dbe = new DecorDeBriqueDataElement(
-				BrickEditor.niveau, BrickEditor.elementTaille);
+		DecorDeBriqueDataElement dbe = new DecorDeBriqueDataElement(BrickEditor.niveau, BrickEditor.elementTaille);
 		dbe.nomHabillage = descKube.nomHabillage;
 		dbe.configValues = new ConfigValues();
 		dbe.configValues.brouillard = 0.008f;
@@ -700,7 +714,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 					if (nomRegle != null) {
 						String nomModel = rgl.nomModel(nomRegle);
 						ModelClasse mc = decorDeBriqueData.models.get(nomModel);
-						ajouter(rgl,mc, ix, iy, iz, dbe);
+						ajouter(rgl, mc, ix, iy, iz, dbe);
 						if (pf != null) {
 							Part part = new Part();
 							part.base = decorDeBriqueData;

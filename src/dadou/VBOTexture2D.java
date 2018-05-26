@@ -56,6 +56,15 @@ public class VBOTexture2D implements Element3D {
 		elt.position.set(x, y, z);
 
 	}
+	public int addVertex(Vector3f p) {
+
+		VBOTexture2DElement elt = this.getVBOTexture2DElement(idxVertexArray);
+		int r = idxVertexArray;
+		idxVertexArray++;
+		elt.position.set(p.x,p.y, p.z);
+		return r;
+
+	}
 
 	public int addCoordTexture2D(float x, float y) {
 		VBOTexture2DElement elt = this

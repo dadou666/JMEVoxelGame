@@ -16,7 +16,7 @@ import javax.swing.JFrame;
 class TerrainCanvas extends JComponent implements KeyListener {
 	public static int width = 256;
 	public static int height = 256;
-	public static int size = 1;
+	public static int size = 4;
 	public Terrain red;
 	public Terrain green;
 	public Terrain blue;
@@ -24,10 +24,10 @@ class TerrainCanvas extends JComponent implements KeyListener {
 
 	public void initTerrain() {
 		int deltat = 1;
-		int hauteur = 255;
-		red = new Terrain(width, deltat, hauteur);
-		blue = new Terrain(width, deltat, hauteur);
-		green = new Terrain(width,deltat, hauteur);
+		int hauteur = 50;
+		red = new Terrain(width,  hauteur);
+		blue = new Terrain(width,  hauteur);
+		green = new Terrain(width, hauteur);
 
 	}
 
@@ -55,17 +55,26 @@ class TerrainCanvas extends JComponent implements KeyListener {
 	public TerrainCanvas() {
 		this.initTerrain();
 		modify(red);
-		modify(green);
-		modify(blue);
-		//green = red;
-		//blue=red;
+	//	modify(green);
+		//modify(blue);
+		green = red;
+		red.simplifier();
+		blue=red;
 	}
 
 	public void paint(Graphics g) {
 		int total = 0;
 		for (int x = 0; x < width; x++) {
 			for (int y = 0; y < width; y++) {
-				Color color = new Color(255 - red.grille[x][y], 255 - green.grille[x][y], 255 - blue.grille[x][y]);
+				
+				float fr =red.grille[x][y];
+				fr = fr / (float)red.maxValue;
+				float fg =green.grille[x][y];
+				fg = fg / (float)red.maxValue;
+				float fb =blue.grille[x][y];
+				fb = fb / (float)red.maxValue;
+						
+				Color color = new Color((1.0f-fr), (1.0f-fg) , (1.0f - fb));
 				g.setColor(color);
 				g.fillRect(x * size, y * size, size, size);
 				if (color.getBlue() != 0 && color.getRed() != 0 && color.getGreen() != 0) {

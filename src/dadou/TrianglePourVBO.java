@@ -1,6 +1,6 @@
 package dadou;
 
-public class Triangle {
+public class TrianglePourVBO {
 	public int idxA;
 	public int idxB;
 	public int idxC;

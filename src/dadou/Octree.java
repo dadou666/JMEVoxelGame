@@ -129,7 +129,7 @@ public class Octree<T> implements Serializable {
 
 		Octree<T> r = null;
 		for (Octree<T> o : children) {
-			if (o.box.intersects(box)) {
+			if (o!=null && o.box.intersects(box)) {
 				if (r != null) {
 					return this;
 				}
@@ -220,7 +220,8 @@ public class Octree<T> implements Serializable {
 	public Octree<T> getOctreeFor(BoundingSphere bs) {
 		Octree<T> r = null;
 		for (Octree<T> child : children) {
-			if (child.box.intersects(bs)) {
+			
+			if (child != null && child.box.intersects(bs)) {
 				if (r != null) {
 					return this;
 				}

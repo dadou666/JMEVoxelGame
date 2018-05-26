@@ -13,6 +13,7 @@ import dadou.tools.BrickEditor;
 
 public class OctreeValeur {
 	public ElementDecor ed;
+
 	public ObjetMobile om;
 	public Joueur joueur;
 
@@ -46,8 +47,13 @@ public class OctreeValeur {
 	}
 
 	public boolean contientElementDecor() {
-
-		return (ed != null && ed.brique != null && ed.brique.vbo.numTri > 0);
+		if (ed == null) {
+			return false;
+		}
+		if (ed.pt != null) {
+			return true;
+		}
+		return ( ed.brique != null && ed.brique.vbo.numTri > 0);
 	}
 
 	public boolean estVide() {

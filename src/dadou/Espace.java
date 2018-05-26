@@ -155,6 +155,9 @@ public class Espace {
 	}
 
 	public void boucler(Octree<OctreeValeur> oct) throws StopperBoucle {
+		if (oct == null) {
+			return;
+		}
 		if (oct.value != null) {
 			ObjetMobile om = oct.value.om;
 			while (om != null) {
@@ -189,6 +192,9 @@ public class Espace {
 	}
 
 	public void vider(Octree<OctreeValeur> oct) {
+		if (oct == null) {
+			return;
+		}
 		if (oct.value != null) {
 			oct.value.om = null;
 		}
@@ -202,6 +208,9 @@ public class Espace {
 
 	public ObjetMobile getOMFor(Octree<OctreeValeur> oct, BoundingSphere bs,
 			boolean ignoreZoneDetection) {
+		if (oct == null) {
+			return null;
+		}
 		do {
 
 			ObjetMobile tmp = oct.value.om;

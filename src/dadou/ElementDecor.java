@@ -15,6 +15,7 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.Camera;
 
 import dadou.VoxelTexture3D.CouleurErreur;
+import terrain.Terrain;
 
 public class ElementDecor implements Serializable {
 	/**
@@ -27,11 +28,14 @@ public class ElementDecor implements Serializable {
 	transient public Objet3D obj;
 
 	transient boolean estModifie = false;
+	 public ParcelTerrain pt;
 
 	public int nbBrique = 0;
 	public byte[] bytes;
 	transient Octree<OctreeValeur> octree;
 	transient VoxelTexture3D tex;
+
+	
 
 	public float distanceCam;
 
@@ -47,8 +51,8 @@ public class ElementDecor implements Serializable {
 	}
 
 	/*
-	 * private void readObject(java.io.ObjectInputStream stream) throws
-	 * IOException, ClassNotFoundException {
+	 * private void readObject(java.io.ObjectInputStream stream) throws IOException,
+	 * ClassNotFoundException {
 	 * 
 	 * 
 	 * }
@@ -74,8 +78,7 @@ public class ElementDecor implements Serializable {
 		}
 		int idx = (x + (y + z * dim) * dim) * 4;
 		if (idx >= bytes.length) {
-			throw new CouleurErreur(" x,y,z =" + x + " " + y + " " + z
-					+ " dim=" + dim + "," + dim + "," + dim);
+			throw new CouleurErreur(" x,y,z =" + x + " " + y + " " + z + " dim=" + dim + "," + dim + "," + dim);
 		}
 		int red = byteToInt(bytes[idx]);
 		int green = byteToInt(bytes[idx + 1]);
@@ -84,13 +87,11 @@ public class ElementDecor implements Serializable {
 		try {
 			return new Color(red, green, blue, alpha);
 		} catch (java.lang.IllegalArgumentException e) {
-			throw new Error(" Couleur (red=" + red + " green=" + green
-					+ " blue=" + blue);
+			throw new Error(" Couleur (red=" + red + " green=" + green + " blue=" + blue);
 		}
 	}
 
-	public void ecrireCouleur(int dim, int x, int y, int z, Color color)
-			throws CouleurErreur {
+	public void ecrireCouleur(int dim, int x, int y, int z, Color color) throws CouleurErreur {
 		if (bytes == null) {
 			bytes = new byte[dim * dim * dim * 4];
 		}
@@ -105,8 +106,7 @@ public class ElementDecor implements Serializable {
 		}
 		int idx = (x + (y + z * dim) * dim) * 4;
 		if (idx >= bytes.length) {
-			throw new CouleurErreur(" x,y,z =" + x + " " + y + " " + z
-					+ " dim=" + dim + "," + dim + "," + dim);
+			throw new CouleurErreur(" x,y,z =" + x + " " + y + " " + z + " dim=" + dim + "," + dim + "," + dim);
 		}
 
 		byte r = (byte) color.getRed();
@@ -187,8 +187,7 @@ public class ElementDecor implements Serializable {
 					int hy = vy + py - 1;
 					int hz = vz + pz - 1;
 					Color color;
-					if (hx < 0 || hx >= dim || hy < 0 || hy >= dim || hz < 0
-							|| hz >= dim) {
+					if (hx < 0 || hx >= dim || hy < 0 || hy >= dim || hz < 0 || hz >= dim) {
 						color = Color.BLACK;
 					} else {
 						color = decor.DecorDeBriqueData.lireCouleur(hx, hy, hz);
@@ -202,8 +201,8 @@ public class ElementDecor implements Serializable {
 
 		VBOMinimunPourBriqueAvecTexture3D vbo = null;
 
-		vbo = new VBOMinimunPourBriqueAvecTexture3D(null, tex, decor.lp, 1, 1,
-				1, 1.0f, elementTaille, elementTaille, elementTaille);
+		vbo = new VBOMinimunPourBriqueAvecTexture3D(null, tex, decor.lp, 1, 1, 1, 1.0f, elementTaille, elementTaille,
+				elementTaille);
 
 		brique = vbo.creerBriqueAvecTexture3D(tex);
 		;
@@ -212,8 +211,7 @@ public class ElementDecor implements Serializable {
 
 	}
 
-	public void construire(DecorDeBrique decor, Octree<OctreeValeur> elt)
-			throws CouleurErreur {
+	public void construire(DecorDeBrique decor, Octree<OctreeValeur> elt) throws CouleurErreur {
 		Vector3f center = elt.box.getCenter();
 
 		float extent = elt.box.xExtent;
@@ -262,6 +260,9 @@ public class ElementDecor implements Serializable {
 		LumiereBuffer.courant = this.octree.value.lumiereBuffer;
 		ZoneBuffer.courant = this.octree.value.zoneBuffer;
 		obj.dessiner(cam);
+		if (pt != null) {
+			pt.dessiner();
+		}
 		LumiereBuffer.courant = null;
 		ZoneBuffer.courant = null;
 	}

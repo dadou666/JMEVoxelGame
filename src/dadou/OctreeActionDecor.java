@@ -44,13 +44,10 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	public float h;
 	public Octree<OctreeValeur> premierOct;
 
-	
-
 	public Objet3D worldBox;
 	public Objet3D worldBoxDepth;
 	public Objet3D worldBoxQuery;
 	public int queryWorldBox;
-
 
 	public int LimitVisibilitePixelCount = 10;
 	public String nomSkyBox = "skyBox";
@@ -357,8 +354,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 			if (skyBox == null) {
 				Game.shaderWorldBox.glUniformfARB("size", 1);
 				Game.shaderWorldBox.glUniformfARB("color", Game.fogColor.x, Game.fogColor.y, Game.fogColor.z, 0.0f);
-			//	Game.shaderWorldBox.glUniformfARB("fogDensity", Game.fogDensity);
-			//	Game.shaderWorldBox.glUniformfARB("fogColor", Game.fogColor.x, Game.fogColor.y, Game.fogColor.z);
+				// Game.shaderWorldBox.glUniformfARB("fogDensity", Game.fogDensity);
+				// Game.shaderWorldBox.glUniformfARB("fogColor", Game.fogColor.x,
+				// Game.fogColor.y, Game.fogColor.z);
 
 				worldBox.dessiner(cam);
 			} else {
@@ -374,7 +372,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		while (om != null) {
 			// if (cam.contains(om.getBox()) != Camera.OUTSIDE_FRUSTUM) {
 			this.objetMobiles.add(om);
-			if (om.cad != null ) {
+			if (om.cad != null) {
 				this.cibles.add(om.cad);
 				om.cad.calculerPositionEcranObjectif(om, cam);
 			}
@@ -454,8 +452,8 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		});
 
 		/*
-		 * if (idxVisibilite > 0 && this.visibleOctree.get(0).value.distanceCam
-		 * >= 99999999999.0f) { throw new Error("ko"); }
+		 * if (idxVisibilite > 0 && this.visibleOctree.get(0).value.distanceCam >=
+		 * 99999999999.0f) { throw new Error("ko"); }
 		 */
 
 	}
@@ -533,8 +531,8 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		 * 
 		 * for (Octree<OctreeValeur> oct : this.visibleOctreeCulling) {
 		 * 
-		 * if (oct.value.contientElementDecor() || oct.mark == this.enCoursMark)
-		 * { this.visibleOctree.add(oct); } }
+		 * if (oct.value.contientElementDecor() || oct.mark == this.enCoursMark) {
+		 * this.visibleOctree.add(oct); } }
 		 */
 
 		totalOctreeDansCamera = this.visibleOctree.size();
@@ -564,7 +562,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		this.visibleOctree.clear();
 		// if (Game.rm != Game.RenderMode.Depth) {
 		this.dessinerWorldBox(cam);
-	
+
 		// }
 	}
 
@@ -576,7 +574,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	}
 
 	public void trier() {
-	
+
 		Collections.sort(visibleOctree, new Comparator<Octree<OctreeValeur>>() {
 
 			@Override
@@ -603,8 +601,8 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		});
 
 		/*
-		 * if (idxVisibilite > 0 && this.visibleOctree.get(0).value.distanceCam
-		 * >= 99999999999.0f) { throw new Error("ko"); }
+		 * if (idxVisibilite > 0 && this.visibleOctree.get(0).value.distanceCam >=
+		 * 99999999999.0f) { throw new Error("ko"); }
 		 */
 
 	}
@@ -651,15 +649,17 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	int totalCube = 0;
 
 	public void ajouterSourceLumiereVisible(Octree<OctreeValeur> o) {
-	/*	for (int i = 0; i < o.value.lumiereBuffer.nombreLumiere; i++) {
-
-			Lumiere l = o.value.lumiereBuffer.lumieres[i];
-			if (l != null && l.markSource != LumiereBuffer.markSource && cam.contains(l.boundingSphere(true)) != Camera.OUTSIDE_FRUSTUM) {
-				this.lumieres.add(l);
-
-			}
-
-		}*/
+		/*
+		 * for (int i = 0; i < o.value.lumiereBuffer.nombreLumiere; i++) {
+		 * 
+		 * Lumiere l = o.value.lumiereBuffer.lumieres[i]; if (l != null && l.markSource
+		 * != LumiereBuffer.markSource && cam.contains(l.boundingSphere(true)) !=
+		 * Camera.OUTSIDE_FRUSTUM) { this.lumieres.add(l);
+		 * 
+		 * }
+		 * 
+		 * }
+		 */
 	}
 
 	public int limitVisibleOctree(List<Octree<OctreeValeur>> lst) {
@@ -674,8 +674,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 			if (o.value.contientElementDecor()) {
 
 				o.value.ed.dessiner(cam);
-
-				totalCube += o.value.ed.brique.vbo.numTri;
+				if (o.value.ed.brique != null) {
+					totalCube += o.value.ed.brique.vbo.numTri;
+				}
 
 			}
 			this.ajouterSourceLumiereVisible(o);
@@ -729,6 +730,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 
 		this.calculerLumieres(om, om.octreeLeaf);
 	}
+
 	public void calculerZones(ObjetMobile om) {
 		if (om.zb == null) {
 			om.zb = new ZoneBuffer();
@@ -737,6 +739,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 
 		this.calculerZones(om, om.octreeLeaf);
 	}
+
 	public void calculerLumieres(ObjetMobile om, Octree<OctreeValeur> o) {
 		if (!om.getBox().intersects(o.box)) {
 			return;
@@ -755,6 +758,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		}
 
 	}
+
 	public void calculerZones(ObjetMobile om, Octree<OctreeValeur> o) {
 		if (!om.getBox().intersects(o.box)) {
 			return;
@@ -773,6 +777,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 		}
 
 	}
+
 	public void testVisibilitePourObjetMobile(ObjetMobile om, Octree<OctreeValeur> o) {
 		if (!om.getBox().intersects(o.box)) {
 			return;

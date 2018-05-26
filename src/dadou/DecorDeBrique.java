@@ -71,6 +71,9 @@ public class DecorDeBrique {
 	}
 
 	public void supprimerLumieres(Octree<OctreeValeur> octree) {
+		if (octree == null) {
+			return;
+		}
 		if (octree.level == 0) {
 
 			octree.value.lumiereBuffer.resetBuffer();
@@ -89,6 +92,9 @@ public class DecorDeBrique {
 	}
 
 	public void supprimerZones(Octree<OctreeValeur> octree) {
+		if (octree == null) {
+			return;
+		}
 		if (octree.level == 0) {
 
 			octree.value.zoneBuffer.resetBuffer();
@@ -154,8 +160,7 @@ public class DecorDeBrique {
 
 	}
 
-	public DecorDeBrique(BrickEditor g, int niveau) throws IOException,
-			CouleurErreur, ClassNotFoundException {
+	public DecorDeBrique(BrickEditor g, int niveau) throws IOException, CouleurErreur, ClassNotFoundException {
 		if (g.game != null) {
 			action = new OctreeActionDecor(niveau);
 			action.decor = this;
@@ -165,8 +170,7 @@ public class DecorDeBrique {
 
 	}
 
-	public DecorDeBrique(DecorDeBriqueDataElement data) throws IOException,
-			CouleurErreur, ClassNotFoundException {
+	public DecorDeBrique(DecorDeBriqueDataElement data) throws IOException, CouleurErreur, ClassNotFoundException {
 		this.DecorDeBriqueData = data;
 
 	}
@@ -201,9 +205,8 @@ public class DecorDeBrique {
 
 	}
 
-	public void creerChargeurDecor(ChargeurDecor r, BrickEditor g,
-			DecorDeBriqueDataElement data) throws IOException,
-			ClassNotFoundException, CouleurErreur {
+	public void creerChargeurDecor(ChargeurDecor r, BrickEditor g, DecorDeBriqueDataElement data)
+			throws IOException, ClassNotFoundException, CouleurErreur {
 
 		if (data.decorInfo == null) {
 			data.decorInfo = new DecorInfo();
@@ -232,8 +235,7 @@ public class DecorDeBrique {
 		}
 		List<String> modelInstancesPourSuppression = new ArrayList<>();
 
-		for (Map.Entry<String, ModelInstance> e : DecorDeBriqueData.modelInstances
-				.entrySet()) {
+		for (Map.Entry<String, ModelInstance> e : DecorDeBriqueData.modelInstances.entrySet()) {
 			ModelInstance mi = e.getValue();
 
 			mi.modelClasse = g.decorDeBriqueData.models.get(mi.modelClasse.nom);
@@ -265,8 +267,7 @@ public class DecorDeBrique {
 	public VBOVisibilite vboVisibilite;
 
 	public void initVBOVisibilite(float dim) {
-		shaderVisibilite = new Shader(Shader.class, "visibilite.frag",
-				"visibilite.vert", null);
+		shaderVisibilite = new Shader(Shader.class, "visibilite.frag", "visibilite.vert", null);
 		VBOVisibilite vbo = new VBOVisibilite(shaderVisibilite, 8, 36);
 		vbo.addVertex(0, 0, 0);// 0
 		vbo.addVertex(0, dim, 0);// 1
@@ -375,8 +376,7 @@ public class DecorDeBrique {
 		this.modifierBrique(x, y, z);
 	}
 
-	public void ecrireCouleur(int x, int y, int z, Color color)
-			throws CouleurErreur {
+	public void ecrireCouleur(int x, int y, int z, Color color) throws CouleurErreur {
 		this.DecorDeBriqueData.ecrireCouleur(x, y, z, color);
 		if (!ElementDecor.estVide(color)) {
 
@@ -423,8 +423,7 @@ public class DecorDeBrique {
 		Game g = be.game;
 		// tex.ecouteur = gestionCollision;
 		this.initVBOVisibilite(elementTaille);
-		lp = g.createVoxelShaderParam(be
-				.donnerHabillage(DecorDeBriqueData.nomHabillage));
+		lp = g.createVoxelShaderParam(be.donnerHabillage(DecorDeBriqueData.nomHabillage));
 		octree = new Octree<>(new Vector3f(0, 0, 0), niveau, elementTaille);
 		espace.octree = octree;
 		int n = (int) Math.pow(2, niveau);
@@ -445,8 +444,7 @@ public class DecorDeBrique {
 					py = (py + 0.5f - m) * fElementTaille;
 					pz = (pz + 0.5f - m) * fElementTaille;
 
-					ElementDecor et = DecorDeBriqueData
-							.getElementDecor(x, y, z);
+					ElementDecor et = DecorDeBriqueData.getElementDecor(x, y, z);
 
 					Vector3f pos = new Vector3f(px, py, pz);
 
@@ -466,8 +464,7 @@ public class DecorDeBrique {
 
 	}
 
-	public ChargeurElementDecor creerChargeurDecor(BrickEditor be)
-			throws CouleurErreur {
+	public ChargeurElementDecor creerChargeurDecor(BrickEditor be) throws CouleurErreur {
 		int elementTaille = DecorDeBriqueData.decorInfo.elementTaille;
 		int niveau = DecorDeBriqueData.decorInfo.niveau;
 		Game g = be.game;
@@ -475,8 +472,7 @@ public class DecorDeBrique {
 		// tex.ecouteur = gestionCollision;
 		if (g != null) {
 			this.initVBOVisibilite(elementTaille);
-			lp = g.createVoxelShaderParam(be
-					.donnerHabillage(DecorDeBriqueData.nomHabillage));
+			lp = g.createVoxelShaderParam(be.donnerHabillage(DecorDeBriqueData.nomHabillage));
 		}
 		octree = new Octree<>(new Vector3f(0, 0, 0), niveau, elementTaille);
 		espace.octree = octree;
@@ -498,17 +494,19 @@ public class DecorDeBrique {
 					px = (px + 0.5f - m) * fElementTaille;
 					py = (py + 0.5f - m) * fElementTaille;
 					pz = (pz + 0.5f - m) * fElementTaille;
+					ElementDecor ed = this.DecorDeBriqueData.elementsDecor[x][y][z];
+					if (ed != null && (ed.bytes != null || ed.pt != null)) {
+						ChargeurElementDecor tmp = new ChargeurElementDecor();
+						tmp.x = x;
+						tmp.y = y;
+						tmp.z = z;
+						tmp.px = px;
+						tmp.py = py;
+						tmp.pz = pz;
 
-					ChargeurElementDecor tmp = new ChargeurElementDecor();
-					tmp.x = x;
-					tmp.y = y;
-					tmp.z = z;
-					tmp.px = px;
-					tmp.py = py;
-					tmp.pz = pz;
-
-					tmp.suivant = r;
-					r = tmp;
+						tmp.suivant = r;
+						r = tmp;
+					}
 
 				}
 
@@ -529,18 +527,19 @@ public class DecorDeBrique {
 
 		}
 	}
+
 	public void initHeadless(Octree<OctreeValeur> o) {
 		while (o != null) {
 			if (o.value == null) {
 				o.value = new OctreeValeur();
-				
+
 			}
 			o = o.parent;
 
 		}
 	}
-	public void initAvecVBOMinimun(Octree<OctreeValeur> elt)
-			throws CouleurErreur {
+
+	public void initAvecVBOMinimun(Octree<OctreeValeur> elt) throws CouleurErreur {
 		elt.value.ed.construire(this, elt);
 
 	}
@@ -552,8 +551,7 @@ public class DecorDeBrique {
 		octree.execute(cam, action);
 	}
 
-	public void dessiner(final Camera cam) throws InterruptedException,
-			Exception {
+	public void dessiner(final Camera cam) throws InterruptedException, Exception {
 		action.objetMobiles.clear();
 		action.dansCameraMark = new Object();
 

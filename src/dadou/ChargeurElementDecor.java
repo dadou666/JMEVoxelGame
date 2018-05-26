@@ -3,6 +3,7 @@ package dadou;
 import com.jme.math.Vector3f;
 
 import dadou.VoxelTexture3D.CouleurErreur;
+import terrain.Terrain;
 
 public class ChargeurElementDecor {
 	float px;
@@ -25,6 +26,11 @@ public class ChargeurElementDecor {
 			o.value.ed = et;
 			et.octree = o;
 			decor.initAvecVBOMinimun(o);
+			if (et.pt != null) {
+				et.pt.initVBO( decor.DecorDeBriqueData.terrain);
+			}
+		
+
 		} else {
 			decor.initHeadless(o);
 			o.value.ed = et;
@@ -32,6 +38,10 @@ public class ChargeurElementDecor {
 			decor.initAvecVBOMinimun(o);
 		}
 		int elementTaille = decor.DecorDeBriqueData.decorInfo.elementTaille;
+		if (et.pt != null) {
+			et.pt.initGestionCollision(decor);
+			
+		}
 		if (et.nbBrique > 0) {
 			for (int ux = 0; ux < elementTaille; ux++) {
 				for (int uy = 0; uy < elementTaille; uy++) {
@@ -39,8 +49,7 @@ public class ChargeurElementDecor {
 						int sx = x * elementTaille + ux;
 						int sy = y * elementTaille + uy;
 						int sz = z * elementTaille + uz;
-						if (!ElementDecor
-								.estVide(decor.lireCouleur(sx, sy, sz))) {
+						if (!ElementDecor.estVide(decor.lireCouleur(sx, sy, sz))) {
 							decor.gestionCollision.ajouterBrique(sx, sy, sz);
 
 						}

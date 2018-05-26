@@ -44,7 +44,8 @@ public class Game {
 	static public RenderMode rm;
 	static public boolean aliasing = true;
 	static public int showEdge =1;
-
+	static public Vector3f colorTerrain = new Vector3f(1.0f,1.0f,1.0f);
+	static public float minColor = 0.55f;
 	static public VoxelShader vs;
 
 	static public VoxelShader vsDepth;
@@ -117,6 +118,7 @@ public class Game {
 	static public Shader shaderWorldBoxVisibilite;
 	static public Shader shaderBase;
 	static public Shader shaderSoleil;
+	static public Shader shaderTerrain;
 	static public Shader shaderLumiere;
 	static public Shader shaderSkyBox;
 	static public Shader shaderSansVBO;
@@ -213,8 +215,8 @@ public class Game {
 		shaderParticuleDevant = new Shader(Shader.class, "particuleDevant.frag", "particuleDevant.vert", null);
 		shaderBase = new Shader(Shader.class, "base.frag", "base.vert", null);
 		shaderSkyBox = new Shader(Shader.class, "skybox.frag", "skybox.vert", null);
-		// shaderSprite ;//= new Shader(Shader.class, "texture/sprite.frag",
-		// "texture/sprite.vert");
+
+		shaderTerrain = new Shader(Shader.class,"terrain.frag","terrain.vert",null);
 		shaderWorldBox = new Shader(Shader.class, "shader_grille.frag", "shader_grille.vert", null);
 		shaderWorldBoxDepth = new Shader(Shader.class, "texture_array/depth/shader_grille.frag",
 				"texture_array/depth/shader_grille.vert", null);

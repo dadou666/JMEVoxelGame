@@ -101,8 +101,8 @@ public class ObjetMobile extends ElementJeux {
 
 	public ModelEvent evenement() {
 		if (me == null) {
-			throw new Error(" nom classe =" + mc.nomModele() + "  " + this.donnerNom());
-
+		//	throw new Error(" nom classe =" + mc.nomModele() + "  " + this.donnerNom());
+				me = new ModelEvent();
 		}
 		return me;
 	}
