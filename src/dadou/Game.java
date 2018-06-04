@@ -45,7 +45,7 @@ public class Game {
 	static public boolean aliasing = true;
 	static public int showEdge =1;
 	static public Vector3f colorTerrain = new Vector3f(1.0f,1.0f,1.0f);
-	static public float minColor = 0.55f;
+	static public float minColor = 1.0f;
 	static public VoxelShader vs;
 
 	static public VoxelShader vsDepth;

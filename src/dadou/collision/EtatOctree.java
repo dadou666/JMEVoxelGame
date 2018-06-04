@@ -18,8 +18,8 @@ public class EtatOctree implements Serializable {
 	private static final long serialVersionUID = 8588930562229311216L;
 	public int x, y, z;
 	public int dim;
-	public int max;
-	public int count;
+	public long max;
+	public long count;
 	public Object marque = null;
 
 	public EtatOctree(int x, int y, int z, int dim) {
@@ -27,7 +27,8 @@ public class EtatOctree implements Serializable {
 		this.y = y;
 		this.z = z;
 		this.dim = dim;
-		max = dim * dim * dim;
+		long ldim = dim;
+		max = ldim * ldim * ldim;
 		count = 0;
 	}
 

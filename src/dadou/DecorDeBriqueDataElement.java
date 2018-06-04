@@ -41,6 +41,8 @@ public class DecorDeBriqueDataElement implements Serializable {
 	 */
 	private static final long serialVersionUID = 4799226871286994448L;
 	public ElementDecor[][][] elementsDecor;
+
+
 	public DecorInfo decorInfo;
 	public String nom;
 	public String nomKubeSommet;
@@ -65,12 +67,12 @@ public class DecorDeBriqueDataElement implements Serializable {
 		if (terrain == null) {
 			return 0;
 		}
-		int r=0;
+		int r = 0;
 		int elementTaille = decorInfo.elementTaille;
 
 		float fElementTaille = elementTaille;
-		int dim = terrain.dim ;
-		float m = fElementTaille*(float) Math.pow(2, decorInfo.niveau - 1);
+		int dim = terrain.dim;
+		float m = fElementTaille * (float) Math.pow(2, decorInfo.niveau - 1);
 		for (int px = 0; px < dim - 1; px++) {
 			for (int pz = 0; pz < dim - 1; pz++) {
 
@@ -87,15 +89,11 @@ public class DecorDeBriqueDataElement implements Serializable {
 				int hMin = Math.min(Math.min(h00z, h11z), Math.min(h01z, h10z));
 				ElementDecor ed = this.getElementDecor(ux, hMin, uz);
 
-			
-
 				if (ed.pt == null) {
-					ed.pt = new ParcelTerrain(m, terrain.maxValue,ux,hMin,uz,elementTaille);
+					ed.pt = new ParcelTerrain(m, terrain.maxValue, ux, hMin, uz, elementTaille);
 					r++;
 
 				}
-
-			
 
 			}
 
@@ -577,6 +575,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public void sauvegarder(String nomFichier) throws FileNotFoundException, IOException {
 
 		String nomFichierComplet = (new File(nomFichier)).getAbsolutePath();
+	
 		SerializeTool.save(this, nomFichierComplet);
 
 	}

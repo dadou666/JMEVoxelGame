@@ -1,15 +1,26 @@
 package terrain;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import dadou.Texture2D;
+
 public class Terrain implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5283845604442402151L;
+
 	public int grille[][];
 
 	public int maxValue;
 	public int dim;
 	public int nbSimplification = 0;
+
 
 	public java.util.Random random = new java.util.Random();
 
@@ -26,6 +37,26 @@ public class Terrain implements Serializable {
 
 	}
 
+	public float hauteur(float x, float y) {
+		int uy = (int) y;
+		int ux = (int) x;
+		float tx = ux;
+		float ty = uy;
+		tx = x - tx;
+		ty = y - ty;
+		float h00 = grille[ux][uy];
+		float h10 = grille[ux + 1][uy];
+		float h0 = (1.0f - tx) * h00 + tx * h10;
+
+		float h01 = grille[ux][uy + 1];
+		float h11 = grille[ux + 1][uy + 1];
+		float h1 = (1.0f - tx) * h01 + tx * h11;
+
+		float h = (1.0f - ty) * h0 + ty * h1;
+		return h;
+
+	}
+
 	public int valeurSimplification(int ux, int uy) {
 		int v = grille[ux][uy];
 		int np = 0;
@@ -35,10 +66,10 @@ public class Terrain implements Serializable {
 				if (dx != 0 || dy != 0) {
 					int px = ux + dx;
 					int py = uy + dy;
-					if (v == grille[px][py]-1) {
+					if (v == grille[px][py] - 1) {
 						np++;
 					}
-					if (v  == grille[px][py]+1) {
+					if (v == grille[px][py] + 1) {
 						nm++;
 					}
 				}
@@ -58,7 +89,6 @@ public class Terrain implements Serializable {
 
 	public Terrain(int n, int maxValue) {
 		this.maxValue = maxValue;
-
 
 		grille = new int[n][n];
 		this.dim = n;

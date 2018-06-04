@@ -255,6 +255,9 @@ public class Espace {
 
 	public ObjetMobile getOMFor(Octree<OctreeValeur> oct, BoundingSphere bs,
 			EspaceSelector es) {
+		if (oct == null) {
+			return null;
+		}
 		do {
 
 			ObjetMobile tmp = oct.value.om;
@@ -298,7 +301,9 @@ public class Espace {
 
 	public void processAll(Octree<OctreeValeur> oct, BoundingSphere bs,
 			EspaceAction es) {
-
+		if (oct == null) {
+			return;
+		}
 		ObjetMobile tmp = oct.value.om;
 		while (tmp != null) {
 
@@ -331,7 +336,9 @@ public class Espace {
 	public ObjetMobile getOMFor(Octree<OctreeValeur> oct,
 			OrientedBoundingBoxWithVBO box, boolean ignoreZoneDetection) {
 		do {
-
+			if (oct == null) {
+				return null;
+			}
 			ObjetMobile tmp = oct.value.om;
 			while (tmp != null) {
 
@@ -370,7 +377,10 @@ public class Espace {
 
 	public ObjetMobile getOMFor(Octree<OctreeValeur> oct,
 			OrientedBoundingBoxWithVBO box, EspaceSelector es) {
-		do {
+		if (oct == null) {
+			return null;
+		}
+		do {	
 
 			ObjetMobile tmp = oct.value.om;
 			while (tmp != null) {

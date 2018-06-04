@@ -1,8 +1,13 @@
 package dadou;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import com.jme.math.Vector3f;
 
 import dadou.VoxelTexture3D.CouleurErreur;
+import dadou.tools.BrickEditor;
+import dadou.tools.SerializeTool;
 import terrain.Terrain;
 
 public class ChargeurElementDecor {
@@ -16,7 +21,9 @@ public class ChargeurElementDecor {
 	ChargeurElementDecor suivant;
 
 	public void charger(DecorDeBrique decor) throws CouleurErreur {
-		ElementDecor et = decor.DecorDeBriqueData.getElementDecor(x, y, z);
+		ElementDecor et = null;
+
+		et = decor.DecorDeBriqueData.getElementDecor(x, y, z);
 
 		Vector3f pos = new Vector3f(px, py, pz);
 
@@ -27,9 +34,8 @@ public class ChargeurElementDecor {
 			et.octree = o;
 			decor.initAvecVBOMinimun(o);
 			if (et.pt != null) {
-				et.pt.initVBO( decor.DecorDeBriqueData.terrain);
+				et.pt.initVBO(decor.DecorDeBriqueData.terrain);
 			}
-		
 
 		} else {
 			decor.initHeadless(o);
@@ -39,8 +45,8 @@ public class ChargeurElementDecor {
 		}
 		int elementTaille = decor.DecorDeBriqueData.decorInfo.elementTaille;
 		if (et.pt != null) {
-			et.pt.initGestionCollision(decor);
-			
+			// et.pt.initGestionCollision(decor);
+
 		}
 		if (et.nbBrique > 0) {
 			for (int ux = 0; ux < elementTaille; ux++) {

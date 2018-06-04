@@ -188,7 +188,7 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	}
 
 	public Objet3D createWorldBox(int niveau, Shader shader) {
-		dim = (float) (Math.pow(2, niveau) * BrickEditor.elementTaille);
+		dim = (float) (Math.pow(2, 6) * BrickEditor.elementTaille);
 
 		VBOTexture2D vboWorldBox = new VBOTexture2D(shader);
 		vboWorldBox.normalActif = false;
@@ -490,6 +490,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	public int deltatCulling;
 
 	public void calculerObjetMobileOctree(ObjetMobile om, Octree<OctreeValeur> o) {
+		if (o == null) {
+			return;
+		}
 		if (!om.getBox().intersects(o.box)) {
 			return;
 		}
@@ -741,6 +744,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	}
 
 	public void calculerLumieres(ObjetMobile om, Octree<OctreeValeur> o) {
+		if (o == null) {
+			return;
+		}
 		if (!om.getBox().intersects(o.box)) {
 			return;
 		}
@@ -760,6 +766,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	}
 
 	public void calculerZones(ObjetMobile om, Octree<OctreeValeur> o) {
+		if (o == null) {
+			return;
+		}
 		if (!om.getBox().intersects(o.box)) {
 			return;
 		}
@@ -795,6 +804,9 @@ public class OctreeActionDecor implements OctreeAction<OctreeValeur> {
 	}
 
 	public boolean estVisible(ObjetMobile om, Octree<OctreeValeur> o) {
+		if (o == null) {
+			return false;
+		}
 		if (!om.getBox().intersects(o.box)) {
 			return false;
 		}

@@ -1,5 +1,8 @@
 package dadou;
 
+import static org.lwjgl.opengl.ARBMultitexture.GL_TEXTURE0_ARB;
+import static org.lwjgl.opengl.ARBMultitexture.glActiveTextureARB;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ public class ParcelTerrain implements Serializable {
 	public float m;
 	public float hMax;
 	public int elementTaille;
+	public float dim;
+
 
 	public ParcelTerrain(float m, float hMax, int x, int y, int z, int elementTaille) {
 		this.m = m;
@@ -45,6 +50,8 @@ public class ParcelTerrain implements Serializable {
 	}
 
 	public void initVBO(Terrain terrain) {
+		this.dim = terrain.dim;
+
 		vbo = new VBOTexture2D(Game.shaderTerrain);
 		List<TrianglePourObjet> triangles = new ArrayList<>();
 		this.ajouterTriangles(terrain, triangles);
@@ -64,15 +71,21 @@ public class ParcelTerrain implements Serializable {
 		//	System.out.println(" ok");
 		}
 		vbo.createVBO();
+		
 	}
 
 	public void dessiner() {
+
+
 		vbo.bind();
 		Game.shaderTerrain.use();
-		Game.shaderTerrain.glUniformfARB("color", Game.colorTerrain.x, Game.colorTerrain.x, Game.colorTerrain.x);
-		Game.shaderTerrain.glUniformfARB("hMax", hMax);
+	Game.shaderTerrain.glUniformfARB("color", Game.colorTerrain.x, Game.colorTerrain.x, Game.colorTerrain.x);
+	Game.shaderTerrain.glUniformfARB("hMax", hMax);
 		Game.shaderTerrain.glUniformfARB("m", m);
-		Game.shaderTerrain.glUniformfARB("a", Game.minColor);
+
+	Game.shaderTerrain.glUniformfARB("a", Game.minColor);
+
+	
 		vbo.dessiner(Game.shaderTerrain);
 		vbo.unBindVAO();
 

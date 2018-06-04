@@ -476,11 +476,14 @@ public class DecorDeBrique {
 		}
 		octree = new Octree<>(new Vector3f(0, 0, 0), niveau, elementTaille);
 		espace.octree = octree;
+		
+	
 		int n = (int) Math.pow(2, niveau);
 		float m = (float) Math.pow(2, niveau - 1);
 		float fElementTaille = elementTaille;
 
 		ChargeurElementDecor r = null;
+	
 		for (int x = 0; x < n; x++) {
 
 			for (int y = 0; y < n; y++) {
@@ -583,14 +586,14 @@ public class DecorDeBrique {
 
 			}
 
-			if (this.g.soleil != null) {
+		/*	if (this.g.soleil != null) {
 				GL11.glEnable(GL11.GL_BLEND);
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				for (Lumiere l : action.lumieres) {
 					l.dessinerLumiere(cam);
 				}
 				this.g.soleil.dessinerLumiere(cam);
-			}
+			}*/
 			ObjetMobilePourModelInstance.renduTransparence = 0.0f;
 
 			GL11.glDisable(GL11.GL_BLEND);

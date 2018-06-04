@@ -14,13 +14,15 @@ public class DecorInfo   implements Serializable{
 		this.niveau = niveau;
 		this.elementTaille = elementTaille;
 		nbCube = dim * elementTaille;
-	
 		d.elementsDecor = new ElementDecor[dim][dim][dim];
+	
+
 		
 	}
-	/**
-	 * 
-	 */
+	public void initElementDecor(DecorDeBriqueDataElement d) {
+		d.elementsDecor = new ElementDecor[dim][dim][dim];
+	}
+
 	private static final long serialVersionUID = -8973649883450822315L;
 
 }

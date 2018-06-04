@@ -135,6 +135,7 @@ import dadou.tools.graphics.Info;
 import dadou.tools.monde.SelectionMonde;
 import dadou.tools.texture.ChoixKube;
 import dadou.tools.texture.ChoixTexture;
+import terrain.Terrain;
 
 public class BrickEditor implements Comportement {
 
@@ -198,8 +199,7 @@ public class BrickEditor implements Comportement {
 		}
 	}
 
-	public ModelClasse modelClassePourCube(Color color, String nomHabillage)
-			throws CouleurErreur, Exception {
+	public ModelClasse modelClassePourCube(Color color, String nomHabillage) throws CouleurErreur, Exception {
 		StringBuilder sb = new StringBuilder();
 		sb.append(nomHabillage);
 
@@ -263,8 +263,7 @@ public class BrickEditor implements Comportement {
 	boolean debugTmpBox = true;
 	OrientedBoundingBoxWithVBO tmpBox = new OrientedBoundingBoxWithVBO();
 
-	public boolean estAccessibleDepuis(Vector3f debut, Vector3f fin, float sx,
-			float sy, EspaceSelector es) {
+	public boolean estAccessibleDepuis(Vector3f debut, Vector3f fin, float sx, float sy, EspaceSelector es) {
 		tmp.y = sx;
 		tmp.z = sy;
 
@@ -311,8 +310,7 @@ public class BrickEditor implements Comportement {
 		if (h == null) {
 			try {
 				Log.print(" chargement " + nomHabillage);
-				h = (Habillage) SerializeTool.load(new File(
-						this.cheminRessources, nomHabillage));
+				h = (Habillage) SerializeTool.load(new File(this.cheminRessources, nomHabillage));
 				this.habillages.put(nomHabillage, h);
 			} catch (ClassNotFoundException | IOException e) {
 				// TODO Auto-generated catch block
@@ -337,8 +335,7 @@ public class BrickEditor implements Comportement {
 		}
 
 		selection.BoxSelectionAction = selection.BoxColler;
-		selection.EtatBoxSelection = new AfficherBoxSelection(mc.dx, mc.dy,
-				mc.dz, mc.echelle, mc);
+		selection.EtatBoxSelection = new AfficherBoxSelection(mc.dx, mc.dy, mc.dz, mc.echelle, mc);
 		etat = selection;
 	}
 
@@ -349,8 +346,7 @@ public class BrickEditor implements Comportement {
 		}
 		if (menuTexture.selected) {
 			ChoixTexture ct = h.donnerChoixTexture(game, true);
-			return new Color(ct.choix.valeur.idx, ct.choix.valeur.idx,
-					ct.choix.valeur.idx);
+			return new Color(ct.choix.valeur.idx, ct.choix.valeur.idx, ct.choix.valeur.idx);
 		}
 		if (h.choixKube == null) {
 			return Color.BLACK;
@@ -401,8 +397,7 @@ public class BrickEditor implements Comportement {
 		this.mondeInterface.mapAffichage = new HashMap<>();
 		if (mondeInterface.sauvegardeMonde != null) {
 			mondeInterface.sauvegardeMonde.monde.i = this.mondeInterface.mondeInterface;
-			mondeInterface.sauvegardeMonde
-					.chargerDebut(mondeInterface.sauvegardeJoueur);
+			mondeInterface.sauvegardeMonde.chargerDebut(mondeInterface.sauvegardeJoueur);
 
 		} else {
 			decor.DecorDeBriqueData.demarer(this.mondeInterface);
@@ -424,8 +419,7 @@ public class BrickEditor implements Comportement {
 
 			if (om.model != null) {
 				if (om.mei == null) {
-					om.mei = om.evenement().creerModeleEventInterface(nomModel,
-							this.mondeInterface);
+					om.mei = om.evenement().creerModeleEventInterface(nomModel, this.mondeInterface);
 					Map<String, String> params = null;
 					params = om.model.params();
 					om.evenement().demarer(om, params);
@@ -508,8 +502,28 @@ public class BrickEditor implements Comportement {
 	public boolean sautForce = false;
 	public int hauteurSautForce = hauteurSautMax;
 
-	public void gererCamera(boolean verouillerCamera) throws CouleurErreur,
-			SautCamera {
+	public boolean corrigerHauteurSiTerrain() {
+		Terrain terrain = this.decor.DecorDeBriqueData.terrain;
+
+		if (terrain != null) {
+			float dimX = decor.DecorDeBriqueData.decorInfo.nbCube;
+			float dimY = decor.DecorDeBriqueData.decorInfo.nbCube;
+			float dimZ = decor.DecorDeBriqueData.decorInfo.nbCube;
+			Vector3f location = scc.cam.getLocation();
+			float x = location.x + dimX / 2.0f;
+			float z = location.z + dimY / 2.0f;
+			float h = terrain.hauteur(x, z) - dimZ / 2.0f;
+			float q = 3.0f;
+			if (location.y <= h + q) {
+				scc.deplacerPositionCamera(0, h + q - location.y, 0);
+				return true;
+			}
+
+		}
+		return false;
+	}
+
+	public void gererCamera(boolean verouillerCamera) throws CouleurErreur, SautCamera {
 		if (verouillerCamera) {
 			return;
 		}
@@ -559,8 +573,7 @@ public class BrickEditor implements Comportement {
 
 		boolean collisionDecorCamera = this.collisionDecorCamera();
 
-		boolean intersectSphereCam = espace.octree.box
-				.intersects(scc.sphereCam);
+		boolean intersectSphereCam = espace.octree.box.intersects(scc.sphereCam);
 
 		if (mondeInterface.active && (!intersectSphereCam)) {
 			scc.restore();
@@ -643,8 +656,7 @@ public class BrickEditor implements Comportement {
 					aj.i = this.mondeInterface.mondeInterface;
 					aj.sautEnCours(sautForce, hauteurSaut);
 				} else
-					this.decor.DecorDeBriqueData.sautEnCours(
-							this.mondeInterface, sautForce, hauteurSaut);
+					this.decor.DecorDeBriqueData.sautEnCours(this.mondeInterface, sautForce, hauteurSaut);
 
 			}
 			if (this.annulerDeplacementSiBesoin(0, deltatSaut, 0)) {
@@ -658,9 +670,10 @@ public class BrickEditor implements Comportement {
 			float deltatDescente = 0.75f;
 			bsPourSol.setRadius(scc.sphereCam.radius);
 			omHauteur = scc.donnerObjetMobilePourHauteur(bsPourSol, hauteur);
-			boolean collisionHauteur = scc.collisionDecorPourHauteur(bsPourSol,
-					hauteur);
+			boolean collisionHauteur = scc.collisionDecorPourHauteur(bsPourSol, hauteur);
+
 			toucherSol = omHauteur != null || collisionHauteur;
+
 			if (toucherSol) {
 				sautForce = false;
 			}
@@ -674,11 +687,9 @@ public class BrickEditor implements Comportement {
 					scc.deplacerPositionCamera(omHauteur.dep);
 					scc.calculerBox(cam, vc);
 
-					this.annulerDeplacementSiBesoin(omHauteur.dep.x,
-							omHauteur.dep.y, omHauteur.dep.z);
+					this.annulerDeplacementSiBesoin(omHauteur.dep.x, omHauteur.dep.y, omHauteur.dep.z);
 					omHauteur.dep.set(Vector3f.ZERO);
-				} else if (scc.donnerObjetMobilePourHauteur(bsPourSol, hauteur
-						- deltat) != null) {
+				} else if (scc.donnerObjetMobilePourHauteur(bsPourSol, hauteur - deltat) != null) {
 					scc.deplacerPositionCamera(0, deltat, 0);
 					scc.calculerBox(cam, vc);
 					this.annulerDeplacementSiBesoin(0, deltat, 0);
@@ -687,8 +698,12 @@ public class BrickEditor implements Comportement {
 			} else {
 				if (!collisionHauteur) {
 					scc.deplacerPositionCamera(0, -deltatDescente, 0);
+
 					scc.calculerBox(cam, vc);
-					if (this.annulerDeplacementSiBesoin(0, -deltatDescente, 0)) {
+					if (this.corrigerHauteurSiTerrain()) {
+						scc.calculerBox(cam, vc);
+						toucherSol = true;
+					} else if (this.annulerDeplacementSiBesoin(0, -deltatDescente, 0)) {
 						scc.restore();
 						toucherSol = true;
 						sautForce = false;
@@ -701,8 +716,7 @@ public class BrickEditor implements Comportement {
 						chute = true;
 					}
 					;
-					if (scc.collisionDecorPourHauteur(bsPourSol, hauteur
-							- deltat)) {
+					if (scc.collisionDecorPourHauteur(bsPourSol, hauteur - deltat)) {
 						scc.deplacerPositionCamera(0, deltat, 0);
 						scc.calculerBox(cam, vc);
 						this.annulerDeplacementSiBesoin(0, deltat, 0);
@@ -715,15 +729,10 @@ public class BrickEditor implements Comportement {
 			toucherSol = false;
 		}
 
-		/*
-		 * if (collisionDecorCamera) { scc.restore(); }
-		 */
-
 	}
 
 	public boolean collisionDecorCamera() {
-		if (this.decor.gestionCollision.verifierCollision(scc.boxCam)
-				&& vc.vitesseDeplacement > 0) {
+		if (this.decor.gestionCollision.verifierCollision(scc.boxCam) && vc.vitesseDeplacement > 0) {
 			return true;
 		}
 		if (this.decor.gestionCollision.verifierCollision(scc.sphereCam)) {
@@ -733,8 +742,8 @@ public class BrickEditor implements Comportement {
 		return false;
 	}
 
-	public boolean annulerDeplacementSiBesoin(float dx, float dy, float dz)
-			throws SautCamera {
+	public boolean annulerDeplacementSiBesoin(float dx, float dy, float dz) throws SautCamera {
+
 		boolean collisionDecorCamera = this.collisionDecorCamera();
 		if (collisionDecorCamera) {
 			scc.deplacerPositionCamera(-dx, -dy, -dz);
@@ -747,6 +756,7 @@ public class BrickEditor implements Comportement {
 			}
 
 		}
+
 		return false;
 
 	}
@@ -755,15 +765,13 @@ public class BrickEditor implements Comportement {
 	public boolean sautMonde = false;
 
 	public boolean gererCollisionCameraAvecObjetMobile() throws SautCamera {
-		ObjetMobile zoneDetection = espace
-				.objetMobileCollisionAvecCamera(false);
+		ObjetMobile zoneDetection = espace.objetMobileCollisionAvecCamera(false);
 		if (zoneDetection != null) {
 			// System.out.println(" obj="+omColision.model.nomObjet);
 
 			if (zoneDetection.evenement() != null && mondeInterface.active) {
 				sautCamera = false;
-				zoneDetection.evenement()
-						.collisionCamera(zoneDetection, joueur);
+				zoneDetection.evenement().collisionCamera(zoneDetection, joueur);
 				if (sautCamera) {
 					sautCamera = false;
 					throw new SautCamera();
@@ -778,8 +786,8 @@ public class BrickEditor implements Comportement {
 		omColision = espace.objetMobileCollisionAvecCamera(true);
 		if (omColision != null) {
 			/*
-			 * if (omColision.model.modelClasse.nom.equals("objet.act")) {
-			 * Log.print(" obj=" , omColision.model.nomObjet); }
+			 * if (omColision.model.modelClasse.nom.equals("objet.act")) { Log.print(" obj="
+			 * , omColision.model.nomObjet); }
 			 */
 
 			if (mondeInterface.active) {
@@ -852,8 +860,7 @@ public class BrickEditor implements Comportement {
 
 	public int cameraSurX() {
 		Vector3f dir = game.getCamera().getDirection();
-		if (Math.abs(dir.x) >= Math.abs(dir.y)
-				&& Math.abs(dir.x) >= Math.abs(dir.z)) {
+		if (Math.abs(dir.x) >= Math.abs(dir.y) && Math.abs(dir.x) >= Math.abs(dir.z)) {
 			if (dir.x > 0) {
 				return 1;
 			} else {
@@ -880,8 +887,7 @@ public class BrickEditor implements Comportement {
 
 	public int cameraSurY() {
 		Vector3f dir = game.getCamera().getDirection();
-		if (Math.abs(dir.y) >= Math.abs(dir.x)
-				&& Math.abs(dir.y) >= Math.abs(dir.z)) {
+		if (Math.abs(dir.y) >= Math.abs(dir.x) && Math.abs(dir.y) >= Math.abs(dir.z)) {
 			if (dir.y > 0) {
 				return 1;
 
@@ -896,8 +902,7 @@ public class BrickEditor implements Comportement {
 
 	public int cameraSurZ() {
 		Vector3f dir = game.getCamera().getDirection();
-		if (Math.abs(dir.z) >= Math.abs(dir.x)
-				&& Math.abs(dir.z) >= Math.abs(dir.y)) {
+		if (Math.abs(dir.z) >= Math.abs(dir.x) && Math.abs(dir.z) >= Math.abs(dir.y)) {
 			if (dir.z > 0) {
 				return 1;
 			} else {
@@ -935,16 +940,14 @@ public class BrickEditor implements Comportement {
 
 	}
 
-	public void modifierShadowMap(ShadowData sd) throws InterruptedException,
-			Exception {
+	public void modifierShadowMap(ShadowData sd) throws InterruptedException, Exception {
 		if (Game.rm == Game.RenderMode.Normal) {
 			return;
 		}
 		if (FBOShadowMap.shadowMap == null) {
 
 			FBOShadowMap.shadowMap = new FBOShadowMap();
-			FBOShadowMap.shadowMap.init(Game.shadowMapWidth,
-					Game.shadowMapHeight, game);
+			FBOShadowMap.shadowMap.init(Game.shadowMapWidth, Game.shadowMapHeight, game);
 			Game.modifierOmbre = 0;
 		}
 		if (Game.modifierOmbre > 1) {
@@ -1010,8 +1013,8 @@ public class BrickEditor implements Comportement {
 		/*
 		 * list.add(menuCopie = new MenuControlleur("copie", 1) {
 		 * 
-		 * @Override public void activer() { DialogDemandeNomClasse.old = etat;
-		 * etat = DialogDemandeNomClasse; processMenuKey = false;
+		 * @Override public void activer() { DialogDemandeNomClasse.old = etat; etat =
+		 * DialogDemandeNomClasse; processMenuKey = false;
 		 * DialogDemandeNomClasse.fermerAction = false;
 		 * 
 		 * deselect(); selected = true; }
@@ -1060,17 +1063,14 @@ public class BrickEditor implements Comportement {
 			public void activer() {
 				deselect();
 				if (decor.DecorDeBriqueData.nomHabillage != null) {
-					if (etat.getClass() == Selection.class
-							|| etat.getClass() == EtatCanon.class) {
+					if (etat.getClass() == Selection.class || etat.getClass() == EtatCanon.class) {
 						selected = true;
 						processMenuKey = false;
 						actions.add(() -> {
 							old = etat;
 							try {
 
-								ChoixTexture ct = BrickEditor.this
-										.donnerHabillage(
-												decor.DecorDeBriqueData.nomHabillage)
+								ChoixTexture ct = BrickEditor.this.donnerHabillage(decor.DecorDeBriqueData.nomHabillage)
 										.donnerChoixTexture(game, true);
 								ct.initialiser(BrickEditor.this.cameraInverse());
 								etat = ct;
@@ -1094,8 +1094,7 @@ public class BrickEditor implements Comportement {
 			public void activer() {
 				deselect();
 				if (decor.DecorDeBriqueData.nomHabillage != null) {
-					if (etat.getClass() == Selection.class
-							|| etat.getClass() == EtatCanon.class) {
+					if (etat.getClass() == Selection.class || etat.getClass() == EtatCanon.class) {
 						selected = true;
 						processMenuKey = false;
 						old = etat;
@@ -1103,8 +1102,7 @@ public class BrickEditor implements Comportement {
 
 							try {
 								FBO fbo = mondeInterface.donnerFBO(128, 128);
-								etat = BrickEditor.this.donnerHabillage(
-										decor.DecorDeBriqueData.nomHabillage)
+								etat = BrickEditor.this.donnerHabillage(decor.DecorDeBriqueData.nomHabillage)
 										.donnerChoixKube(game, fbo, false);
 								etat.BrickEditor = BrickEditor.this;
 							} catch (Exception e) {
@@ -1126,12 +1124,11 @@ public class BrickEditor implements Comportement {
 		/*
 		 * list.add(new MenuControlleur("couleur", 2) { EtatBrickEditor old;
 		 * 
-		 * @Override public void activer() { if (etat.getClass() ==
-		 * Selection.class || etat.getClass() == EtatCanon.class) { old = etat;
-		 * etat = rgbColorSelector;
+		 * @Override public void activer() { if (etat.getClass() == Selection.class ||
+		 * etat.getClass() == EtatCanon.class) { old = etat; etat = rgbColorSelector;
 		 * 
-		 * selected = true; return; } if (etat.getClass() ==
-		 * RGBColorSelector.class) { etat = old; selected = false;
+		 * selected = true; return; } if (etat.getClass() == RGBColorSelector.class) {
+		 * etat = old; selected = false;
 		 * 
 		 * }
 		 * 
@@ -1173,8 +1170,8 @@ public class BrickEditor implements Comportement {
 		/*
 		 * list.add(new MenuControlleur("sphere", 2) {
 		 * 
-		 * @Override public void activer() { afficherSphere = !afficherSphere;
-		 * selected = afficherSphere;
+		 * @Override public void activer() { afficherSphere = !afficherSphere; selected
+		 * = afficherSphere;
 		 * 
 		 * }
 		 * 
@@ -1274,8 +1271,7 @@ public class BrickEditor implements Comportement {
 		chargerModelView();
 		decor.dessiner(cam);
 
-		if (this.selection.placerLumiere
-				&& decor.DecorDeBriqueData.lumieres != null) {
+		if (this.selection.placerLumiere && decor.DecorDeBriqueData.lumieres != null) {
 			if (lumiereModification == null) {
 
 				Lumiere tmp = this.lumiereProche();
@@ -1330,16 +1326,14 @@ public class BrickEditor implements Comportement {
 
 	public boolean pause = false;
 
-	public void chargerMonde(String nomMonde) throws FileNotFoundException,
-			ClassNotFoundException, IOException {
+	public void chargerMonde(String nomMonde) throws FileNotFoundException, ClassNotFoundException, IOException {
 		if (this.decor != null && this.decor.DecorDeBriqueData != null) {
 			Log.print(" Delete Decor");
 			this.decor = null;
 			// this.espace = null;
 			FBOShadowMap.shadowMap = null;
 		}
-		DecorDeBriqueDataElement data = DecorDeBriqueDataElement
-				.charger(cheminRessources + "/" + nomMonde);
+		DecorDeBriqueDataElement data = DecorDeBriqueDataElement.charger(cheminRessources + "/" + nomMonde);
 		if (espace != null) {
 			espace.reset();
 			espace.vider();
@@ -1363,10 +1357,8 @@ public class BrickEditor implements Comportement {
 
 	public GrapheDebug grapheDebug;
 
-	public Graphe creerGrapheMultiRacine(String nomGroupe, float speed,
-			float rayon, boolean peutVoler, float hauteur) {
-		List<String> l = decor.DecorDeBriqueData
-				.donnerNomsPourGroupe(nomGroupe);
+	public Graphe creerGrapheMultiRacine(String nomGroupe, float speed, float rayon, boolean peutVoler, float hauteur) {
+		List<String> l = decor.DecorDeBriqueData.donnerNomsPourGroupe(nomGroupe);
 		List<GrapheSommet> listGS = new ArrayList<>();
 		for (String nom : l) {
 			GrapheSommet gs = new GrapheSommet();
@@ -1375,16 +1367,14 @@ public class BrickEditor implements Comportement {
 			listGS.add(gs);
 		}
 		Log.print("creation graphe constructeur");
-		GrapheConstructeur gc = new GrapheConstructeur(this, listGS, rayon,
-				peutVoler, hauteur, false);
+		GrapheConstructeur gc = new GrapheConstructeur(this, listGS, rayon, peutVoler, hauteur, false);
 		Log.print("graphe constructeur calcul");
 		return gc.calculer(speed);
 	}
 
-	public Graphe creerGrapheMultiRacineSimple(String nomGroupe, float speed,
-			float rayon, boolean peutVoler, float hauteur) {
-		List<String> l = decor.DecorDeBriqueData
-				.donnerNomsPourGroupe(nomGroupe);
+	public Graphe creerGrapheMultiRacineSimple(String nomGroupe, float speed, float rayon, boolean peutVoler,
+			float hauteur) {
+		List<String> l = decor.DecorDeBriqueData.donnerNomsPourGroupe(nomGroupe);
 		List<GrapheSommet> listGS = new ArrayList<>();
 		for (String nom : l) {
 			GrapheSommet gs = new GrapheSommet();
@@ -1393,8 +1383,7 @@ public class BrickEditor implements Comportement {
 			listGS.add(gs);
 		}
 
-		GrapheConstructeur gc = new GrapheConstructeur(this, listGS, rayon,
-				peutVoler, hauteur, true);
+		GrapheConstructeur gc = new GrapheConstructeur(this, listGS, rayon, peutVoler, hauteur, true);
 
 		return gc.calculerGrapheSimple(speed);
 	}
@@ -1440,8 +1429,7 @@ public class BrickEditor implements Comportement {
 
 	}
 
-	public static final FloatBuffer modelViewMatrix = BufferUtils
-			.createFloatBuffer(16);
+	public static final FloatBuffer modelViewMatrix = BufferUtils.createFloatBuffer(16);
 	private Matrix4f modelView = new Matrix4f();
 
 	public void chargerModelView() {
@@ -1462,8 +1450,8 @@ public class BrickEditor implements Comportement {
 				@Override
 				public void run() {
 					if (swingEditor != null && swingEditor.frame != null) {
-						swingEditor.frame.setTitle(decor.DecorDeBriqueData.nom
-								+ "(" + Game.fpsGlobal.getResult() + " FPS)");
+						swingEditor.frame
+								.setTitle(decor.DecorDeBriqueData.nom + "(" + Game.fpsGlobal.getResult() + " FPS)");
 					}
 				}
 
@@ -1663,13 +1651,11 @@ public class BrickEditor implements Comportement {
 	static public String cheminRessources;
 	public DecorDeBriqueData decorDeBriqueData;
 
-	public void chargerDecorDeBriqueData() throws FileNotFoundException,
-			ClassNotFoundException, IOException {
+	public void chargerDecorDeBriqueData() throws FileNotFoundException, ClassNotFoundException, IOException {
 		File file = new File(cheminRessources + "/base.bin");
 
 		if (file.exists()) {
-			decorDeBriqueData = (DecorDeBriqueData) SerializeTool
-					.load(cheminRessources + "/base.bin");
+			decorDeBriqueData = (DecorDeBriqueData) SerializeTool.load(cheminRessources + "/base.bin");
 
 		} else {
 
@@ -1689,8 +1675,7 @@ public class BrickEditor implements Comportement {
 
 	}
 
-	public void chargerRessource() throws FileNotFoundException,
-			ClassNotFoundException, IOException {
+	public void chargerRessource() throws FileNotFoundException, ClassNotFoundException, IOException {
 
 		this.chargerDecorDeBriqueData();
 
@@ -1698,8 +1683,7 @@ public class BrickEditor implements Comportement {
 		if (ls.size() == 0) {
 			String nomFichier = cheminRessources + "/defaut.wld";
 			this.decorDeBriqueData.mondeCourant = "/defaut.wld";
-			DecorDeBriqueDataElement.creer(BrickEditor.niveau,
-					BrickEditor.elementTaille, nomFichier);
+			DecorDeBriqueDataElement.creer(BrickEditor.niveau, BrickEditor.elementTaille, nomFichier);
 
 		}
 		if (this.decorDeBriqueData.mondeCourant == null) {
@@ -1745,8 +1729,7 @@ public class BrickEditor implements Comportement {
 		ChoixModelClasse nvChoixModelClasse = this.choixModelClasses.get(nom);
 
 		try {
-			nvChoixModelClasse = new ChoixModelClasse(this,
-					this.mondeInterface.donnerFBO(128, 128), noms);
+			nvChoixModelClasse = new ChoixModelClasse(this, this.mondeInterface.donnerFBO(128, 128), noms);
 			this.choixModelClasses.put(nom, nvChoixModelClasse);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1755,13 +1738,11 @@ public class BrickEditor implements Comportement {
 
 	}
 
-	public void creerChoixModelClasse(String nom, List<String> noms, int dim,
-			int dx, int dy, float distCoeff) {
+	public void creerChoixModelClasse(String nom, List<String> noms, int dim, int dx, int dy, float distCoeff) {
 		ChoixModelClasse nvChoixModelClasse = this.choixModelClasses.get(nom);
 
 		try {
-			nvChoixModelClasse = new ChoixModelClasse(this,
-					this.mondeInterface.donnerFBO(dim, dim), noms, dx, dy,
+			nvChoixModelClasse = new ChoixModelClasse(this, this.mondeInterface.donnerFBO(dim, dim), noms, dx, dy,
 					distCoeff);
 
 			this.choixModelClasses.put(nom, nvChoixModelClasse);
@@ -1783,8 +1764,7 @@ public class BrickEditor implements Comportement {
 		this.choixModelClasse = this.choixModelClasses.get(nm);
 		if (this.choixModelClasse == null) {
 			try {
-				this.choixModelClasse = new ChoixModelClasse(this,
-						this.mondeInterface.donnerFBO(128, 128),
+				this.choixModelClasse = new ChoixModelClasse(this, this.mondeInterface.donnerFBO(128, 128),
 						decor.DecorDeBriqueData.nomHabillage);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
@@ -1837,8 +1817,7 @@ public class BrickEditor implements Comportement {
 
 		menu = new Menu(ihm, 128, 32, list, false);
 
-		DialogDemandeNomClasse = new dadou.tools.construction.DialogDemandeNomClasse(
-				game);
+		DialogDemandeNomClasse = new dadou.tools.construction.DialogDemandeNomClasse(game);
 		DialogDemandeNomClasse.BrickEditor = this;
 		DialogDemandeNomClone = new DialogDemandeNomClone(game);
 		DialogDemandeNomClone.BrickEditor = this;
@@ -1880,7 +1859,7 @@ public class BrickEditor implements Comportement {
 		cam = game.getCamera();
 		scc = new ExplorerAuSolCameraControllerBis(this, cam);
 		mondeInterface = new MondeInterfacePrive(this);
-		
+
 		mondeInterface.creerMondeInterfacePublic();
 		mondeInterface.chargerSauvegarde();
 		if (mondeInterface.joueur.aj == null) {
@@ -1902,12 +1881,8 @@ public class BrickEditor implements Comportement {
 			this.mondeInterface.nomMonde = SelectionMonde.nom;
 		}
 		if (this.mondeInterface.sauvegardeMonde != null) {
-			this.chargeur
-					.init(this,
-							DecorDeBriqueDataElement
-									.charger(BrickEditor.cheminRessources
-											+ "/"
-											+ this.mondeInterface.sauvegardeJoueur.mondeEnCours));
+			this.chargeur.init(this, DecorDeBriqueDataElement
+					.charger(BrickEditor.cheminRessources + "/" + this.mondeInterface.sauvegardeJoueur.mondeEnCours));
 		} else {
 			this.chargeur.init(this, SelectionMonde.charger());
 		}
@@ -1944,8 +1919,7 @@ public class BrickEditor implements Comportement {
 		delay = System.currentTimeMillis();
 	}
 
-	public void initMondeInterfacePublic() throws FileNotFoundException,
-			ClassNotFoundException, IOException {
+	public void initMondeInterfacePublic() throws FileNotFoundException, ClassNotFoundException, IOException {
 
 		mondeInterface.active = true;
 		mondeInterface.gestionTraitementParalle = new GestionTraitementParallele();
@@ -1954,10 +1928,9 @@ public class BrickEditor implements Comportement {
 	}
 
 	static public void startHeadless(AbstractJoueur j)
-			throws FileNotFoundException, ClassNotFoundException, IOException,
-			CouleurErreur {
+			throws FileNotFoundException, ClassNotFoundException, IOException, CouleurErreur {
 		BrickEditor be = new BrickEditor();
-		
+
 		j.initialiser();
 		be.chargerRessource();
 
@@ -1966,25 +1939,21 @@ public class BrickEditor implements Comportement {
 		be.initMondeInterfacePublic();
 		be.mondeInterface.creerMondeInterfacePublic();
 
-		be.espace = new Espace(be, BrickEditor.niveau,
-				BrickEditor.elementTaille);
+		be.espace = new Espace(be, BrickEditor.niveau, BrickEditor.elementTaille);
 
 		be.chargeur = new ChargeurDecor();
 
-		be.chargeur.init(
-				be,
-				DecorDeBriqueDataElement.charger(BrickEditor.cheminRessources
-						+ "/" + j.nomMonde));
+		be.chargeur.init(be, DecorDeBriqueDataElement.charger(BrickEditor.cheminRessources + "/" + j.nomMonde));
 
 		while (!be.mondeInterface.exit) {
 			if (be.chargeur.decor != null) {
-			//	Log.print(" chargement decor ... ");
+				// Log.print(" chargement decor ... ");
 				be.chargeur.charger(100);
-				if (be.chargeur.decor == null)  {
+				if (be.chargeur.decor == null) {
 					be.demarerMonde();
 				}
 			} else {
-				//Log.print("  loop ... ");
+				// Log.print(" loop ... ");
 				be.mondeInterface.loop();
 			}
 		}

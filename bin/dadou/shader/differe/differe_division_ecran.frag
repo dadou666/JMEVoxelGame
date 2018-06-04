@@ -65,9 +65,28 @@ vec4 image =vec4(0.0,0.0,0.0,0.0);//texture2D( colorTextureID,vcoordTexture2D);
 	
 	
 	image=image*pointProcheCote();
-	
 	float dist = texture2D(shadowTextureID,vcoordTexture2D).y;
-	gl_FragColor =vec4(brouillard(image.xyz,dist),0);  
+	float total = 0.0f;
+		float max = 0.0f;
+		float d = 10.0f;
+		float epsilon =0.0005;
+		float u=4.0f;
+		//if (dist < 20) {
+			for (float py = -d; py <= d; py += 1.0) {
+				for (float px = -d; px <= d; px += 1.0) {
+					vec2 r = vcoordTexture2D + vec2(u*px * tdx, u*py * tdy);
+					if (r.x >= 0.0 && r.x <= 1.0 && r.y >= 0.0 && r.y <= 1.0) {
+						float dist2 = texture2D(shadowTextureID, r).y;
+						if (dist2 >= dist+epsilon || dist >=500) {
+							total = total + 1.0;
+						}
+						max = max + 1.0;
+					}
+
+				}
+			}
+
+	gl_FragColor =vec4((total / max) *brouillard(image.xyz,dist),0);
 	gl_FragDepth =1.0; }
 	//gl_FragColor =normal+0.000001*mix(gl_Fog.color, image *cf, fogFactor );
 }
