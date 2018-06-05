@@ -13,7 +13,7 @@ float pointProcheCote() {
 		return 1.0;
 	}
 	vec3 normal = texture2D(shadowTextureID, vcoordTexture2D).xyz;
-	float m = 2.0;
+	float m = 1.0;
 	float n = 0.0f;
 	for (float py = -m; py <= m; py += 1.0) {
 		for (float px = -m; px <= m; px += 1.0) {
@@ -52,42 +52,39 @@ void main(void) {
 
 		}
 	}
-	image = image / 9.0f;
+	image = image / 9.0;
 	image = image * pointProcheCote();
 	float dist = texture2D(shadowTextureID, vcoordTexture2D).y;
-	float x=  texture2D(shadowTextureID, vcoordTexture2D).x;
 
-	float total = 0.0f;
-	float max = 1.0f;
-	float d = 5.0f;
-	float epsilon = 0.0005;
-	float u = 2.0f;
-	//if (dist < 20) {
-	for (float py = -d; py <= d; py += 1.0) {
-		for (float px = -d; px <= d; px += 1.0) {
-			vec2 r = vcoordTexture2D + vec2(u * px * tdx, u * py * tdy);
-			if (r.x >= 0.0 && r.x <= 1.0 && r.y >= 0.0 && r.y <= 1.0) {
-				float dist2 = texture2D(shadowTextureID, r).y;
-					float x2 = texture2D(shadowTextureID, r).x;
-					float deltat =abs(dist2-dist);
-					if (deltat < 0.5) {
-					if (dist2 >= dist + epsilon || dist == 666) {
-						total = total + deltat;
-					}
-					max = max + deltat;
-					}
-			}
+
+	float total = 0.0;
+	float max =0.0;
+
+
+	float rayon = 7.0;
+	float m = 10;
+
+	for(float n=0.0;n < m ; n=n+1.0) {
+		float a= radians(n*180.0/m);
+		float b= a+radians(180);
+		vec2 pa = vec2(cos(a)*rayon*tdx+vcoordTexture2D.x,sin(a)*rayon*tdy+vcoordTexture2D.y);
+		vec2 pb = vec2(cos(b)*rayon*tdx+vcoordTexture2D.x,sin(b)*rayon*tdy+vcoordTexture2D.y);
+		float ha= texture2D(shadowTextureID, pa).y;
+		float hb= texture2D(shadowTextureID, pb).y;
+		float deltatA= abs(ha-dist);
+		float deltatB= abs(hb-dist);
+		if (deltatA < 2 && deltatB <2) {
+		if (dist > ha && dist > hb) {
+			total=total+1.0;
 
 		}
+		}
+
 	}
-	/*} else {
-	 max = 1.0;
-	 total = 1.0;
-	 }*/
-	float a = (total+1) / max;
-	if (a < 0.35) {
-		a = 0.35;
-	}
+	float a =1-total/m;
+
+
+
 	gl_FragColor = vec4(a * brouillard(image.xyz, dist), 0);
 	gl_FragDepth = 1.0;
 }
