@@ -183,7 +183,7 @@ void main(void) {
     		
     			
 		    gl_FragData[0]= vec4(donnerColorZone(cf*tmp).xyz,transparence);
-		    gl_FragData[1]=vec4(dot(p.normal,position.xyz), length(position.xyz),0.0,0.0);
+		    gl_FragData[1]=vec4(position.xyz,dot(p.normal,position.xyz));
 		}
 	}
 }

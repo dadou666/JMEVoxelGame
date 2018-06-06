@@ -12,14 +12,14 @@ float pointProcheCote() {
 	if (showEdge == 0) {
 		return 1.0;
 	}
-	vec3 normal = texture2D(shadowTextureID, vcoordTexture2D).xyz;
+	float  w = texture2D(shadowTextureID, vcoordTexture2D).w;
 	float m = 1.0;
 	float n = 0.0f;
 	for (float py = -m; py <= m; py += 1.0) {
 		for (float px = -m; px <= m; px += 1.0) {
 			vec2 r = vcoordTexture2D + vec2(px * tdx, py * tdy);
 
-			if (abs(texture2D(shadowTextureID, r).x - normal.x) <= 0.001) {
+			if (abs(texture2D(shadowTextureID, r).w - w) <= 0.001) {
 				n += 1.0f;
 			}
 
@@ -54,7 +54,7 @@ void main(void) {
 	}
 	image = image / 9.0;
 	image = image * pointProcheCote();
-	float dist = texture2D(shadowTextureID, vcoordTexture2D).y;
+	float dist = length(texture2D(shadowTextureID, vcoordTexture2D).xyz);
 
 
 	float total = 0.0;
@@ -69,8 +69,8 @@ void main(void) {
 		float b= a+radians(180);
 		vec2 pa = vec2(cos(a)*rayon*tdx+vcoordTexture2D.x,sin(a)*rayon*tdy+vcoordTexture2D.y);
 		vec2 pb = vec2(cos(b)*rayon*tdx+vcoordTexture2D.x,sin(b)*rayon*tdy+vcoordTexture2D.y);
-		float ha= texture2D(shadowTextureID, pa).y;
-		float hb= texture2D(shadowTextureID, pb).y;
+		float ha= length(texture2D(shadowTextureID, pa).xyz);
+		float hb= length(texture2D(shadowTextureID, pb).xyz);
 		float deltatA= abs(ha-dist);
 		float deltatB= abs(hb-dist);
 		if (deltatA < 2 && deltatB <2) {

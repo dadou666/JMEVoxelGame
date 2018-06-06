@@ -106,8 +106,21 @@ public class Terrain implements Serializable {
 		for (int dx = -1; dx <= 1; dx++) {
 			for (int dy = -1; dy <= 1; dy++) {
 				int px = x + dx;
+				if (px == dim) {
+					px=0;
+				}
+				
 				int py = y + dy;
-				if (px > 0 && py > 0 && px < dim && py < dim) {
+				if (py == dim) {
+					py=0;
+				}
+				if (px < 0) {
+					px=dim-1;
+				}
+				if (py <0) {
+					py=dim-1;
+				}
+				if (px >= 0 && py >= 0 && px < dim && py < dim) {
 					if (r == null) {
 						r = grille[px][py];
 					} else {
