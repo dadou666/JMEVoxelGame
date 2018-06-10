@@ -33,6 +33,7 @@ import dadou.procedural.Regles;
 import dadou.tools.BrickEditor;
 import dadou.tools.SerializeTool;
 import dadou.tools.graphics.ConfigValues;
+import terrain.ParcelTerrain;
 import terrain.Terrain;
 
 public class DecorDeBriqueDataElement implements Serializable {
@@ -41,7 +42,6 @@ public class DecorDeBriqueDataElement implements Serializable {
 	 */
 	private static final long serialVersionUID = 4799226871286994448L;
 	public ElementDecor[][][] elementsDecor;
-
 
 	public DecorInfo decorInfo;
 	public String nom;
@@ -53,7 +53,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public ImageEcran imageEcran;
 	public String nomHabillage;
 	public String skyBox;
-	public Terrain terrain;
+
 	// public Octree<EtatOctree> octree;
 	public Map<String, Object> data = new HashMap<>();
 	public Map<String, CameraPosition> cameraPositions;
@@ -63,7 +63,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public ConfigValues configValues;
 	public Map<String, ModelInstance> modelInstances;
 
-	public int ajouterParcelTerrain() {
+	public int ajouterParcelTerrain(Terrain terrain) {
 		if (terrain == null) {
 			return 0;
 		}
@@ -91,6 +91,7 @@ public class DecorDeBriqueDataElement implements Serializable {
 
 				if (ed.pt == null) {
 					ed.pt = new ParcelTerrain(m, terrain.maxValue, ux, hMin, uz, elementTaille);
+					ed.pt.initGrille(terrain);
 					r++;
 
 				}
@@ -575,8 +576,26 @@ public class DecorDeBriqueDataElement implements Serializable {
 	public void sauvegarder(String nomFichier) throws FileNotFoundException, IOException {
 
 		String nomFichierComplet = (new File(nomFichier)).getAbsolutePath();
-	
+		this.sauvegarderFlux(nomFichierComplet + ".flx");
 		SerializeTool.save(this, nomFichierComplet);
+
+	}
+	public int nbElementFlux = 0;
+	public void sauvegarderFlux(String nomFichier) {
+		List<Object> list = new ArrayList<>();
+
+		for (ElementDecor[][] a : this.elementsDecor) {
+			for (ElementDecor[] b : a) {
+				for (ElementDecor c : b) {
+					if (c != null) {
+						list.add(c);
+					}
+				}
+			}
+		}
+		nbElementFlux = list.size();
+		SerializeTool.saveAsStream(nomFichier, list);
+		this.elementsDecor = null;
 
 	}
 

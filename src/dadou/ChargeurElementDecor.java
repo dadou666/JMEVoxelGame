@@ -34,7 +34,7 @@ public class ChargeurElementDecor {
 			et.octree = o;
 			decor.initAvecVBOMinimun(o);
 			if (et.pt != null) {
-				et.pt.initVBO(decor.DecorDeBriqueData.terrain);
+				et.pt.initVBO(decor.g);
 			}
 
 		} else {

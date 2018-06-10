@@ -14,10 +14,10 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 class TerrainCanvas extends JComponent implements KeyListener {
-	public static int width = 512;
-	public static int height = 512;
-	public static int widthRepeat = 4;
-	public static int heightRepeat =2;
+	public static int width = 200;
+	public static int height = 230;
+	public static int widthRepeat = 8;
+	public static int heightRepeat =4;
 	public static int size =1;
 	public Terrain red;
 	public Terrain green;
@@ -27,6 +27,7 @@ class TerrainCanvas extends JComponent implements KeyListener {
 	public void initTerrain() {
 		int deltat = 1;
 		int hauteur = 50;
+		height=width;
 		red = new Terrain(width, hauteur);
 		blue = new Terrain(width, hauteur);
 		green = new Terrain(width, hauteur);
@@ -64,7 +65,7 @@ class TerrainCanvas extends JComponent implements KeyListener {
 		for (int uy = 0; uy < heightRepeat; uy++)
 			for (int ux = 0; ux < widthRepeat; ux++) {
 				for (int x = 0; x < width; x++) {
-					for (int y = 0; y < width; y++) {
+					for (int y = 0; y < height; y++) {
 
 						float fr = red.grille[x][y];
 						fr = fr / (float) red.maxValue;

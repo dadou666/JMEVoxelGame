@@ -217,14 +217,43 @@ public class DecorDeBrique {
 		}
 
 		DecorDeBriqueData = data;
+		if (data.elementsDecor == null) {
+			Log.print("init element decor");
+			this.initElementDecor();
+			r.total = data.nbElementFlux;
+			Log.print("creer chargeur decor ");
+			r._ChargeurElementDecor = this.creerChargeurElementDecor(g, (ElementDecor) r.ois.readObject());
+	
+		} else {
 
-		ChargeurElementDecor ced = this.creerChargeurDecor(g);
+			ChargeurElementDecor ced = this.creerChargeurDecor(g);
 
-		r.ChargeurElementDecor = ced;
+			r._ChargeurElementDecor = ced;
+			r.total = ced.total();
+		}
 		r.decor = this;
-		r.total = ced.total();
+
 		r.g = g;
 
+	}
+
+	public void initElementDecor() {
+		int elementTaille = DecorDeBriqueData.decorInfo.elementTaille;
+		int niveau = DecorDeBriqueData.decorInfo.niveau;
+		Game g = this.g.game;
+
+		// tex.ecouteur = gestionCollision;
+		if (g != null) {
+			this.initVBOVisibilite(elementTaille);
+			lp = g.createVoxelShaderParam(this.g.donnerHabillage(DecorDeBriqueData.nomHabillage));
+		}
+		octree = new Octree<>(new Vector3f(0, 0, 0), niveau, elementTaille);
+		espace.octree = octree;
+
+		if (this.DecorDeBriqueData.elementsDecor == null) {
+			this.DecorDeBriqueData.decorInfo.initElementDecor(DecorDeBriqueData);
+
+		}
 	}
 
 	public void initialiserModelInstances(BrickEditor g) throws CouleurErreur {
@@ -464,6 +493,42 @@ public class DecorDeBrique {
 
 	}
 
+	public ChargeurElementDecor creerChargeurElementDecor(BrickEditor be, ElementDecor ed) {
+		int elementTaille = DecorDeBriqueData.decorInfo.elementTaille;
+		int niveau = DecorDeBriqueData.decorInfo.niveau;
+		Game g = be.game;
+
+		// tex.ecouteur = gestionCollision;
+		if (g != null) {
+			this.initVBOVisibilite(elementTaille);
+			lp = g.createVoxelShaderParam(be.donnerHabillage(DecorDeBriqueData.nomHabillage));
+		}
+
+		float m = (float) Math.pow(2, niveau - 1);
+		float fElementTaille = elementTaille;
+
+		ChargeurElementDecor r = new ChargeurElementDecor();
+		DecorDeBriqueData.elementsDecor[ed.x][ed.y][ed.z] =ed;
+
+		// System.out.println(" total="+total);
+
+		float px = ed.x;
+		float py = ed.y;
+		float pz = ed.z;
+		px = (px + 0.5f - m) * fElementTaille;
+		py = (py + 0.5f - m) * fElementTaille;
+		pz = (pz + 0.5f - m) * fElementTaille;
+
+		r.x = ed.x;
+		r.y = ed.y;
+		r.z = ed.z;
+		r.px = px;
+		r.py = py;
+		r.pz = pz;
+
+		return r;
+	}
+
 	public ChargeurElementDecor creerChargeurDecor(BrickEditor be) throws CouleurErreur {
 		int elementTaille = DecorDeBriqueData.decorInfo.elementTaille;
 		int niveau = DecorDeBriqueData.decorInfo.niveau;
@@ -476,14 +541,17 @@ public class DecorDeBrique {
 		}
 		octree = new Octree<>(new Vector3f(0, 0, 0), niveau, elementTaille);
 		espace.octree = octree;
-		
-	
+
 		int n = (int) Math.pow(2, niveau);
 		float m = (float) Math.pow(2, niveau - 1);
 		float fElementTaille = elementTaille;
+		if (this.DecorDeBriqueData.elementsDecor == null) {
+			this.DecorDeBriqueData.decorInfo.initElementDecor(DecorDeBriqueData);
+
+		}
 
 		ChargeurElementDecor r = null;
-	
+
 		for (int x = 0; x < n; x++) {
 
 			for (int y = 0; y < n; y++) {
@@ -586,14 +654,12 @@ public class DecorDeBrique {
 
 			}
 
-		/*	if (this.g.soleil != null) {
-				GL11.glEnable(GL11.GL_BLEND);
-				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-				for (Lumiere l : action.lumieres) {
-					l.dessinerLumiere(cam);
-				}
-				this.g.soleil.dessinerLumiere(cam);
-			}*/
+			/*
+			 * if (this.g.soleil != null) { GL11.glEnable(GL11.GL_BLEND);
+			 * GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA); for
+			 * (Lumiere l : action.lumieres) { l.dessinerLumiere(cam); }
+			 * this.g.soleil.dessinerLumiere(cam); }
+			 */
 			ObjetMobilePourModelInstance.renduTransparence = 0.0f;
 
 			GL11.glDisable(GL11.GL_BLEND);

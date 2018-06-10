@@ -237,6 +237,10 @@ public class VBOTexture2D implements Element3D {
 		// Deselect (bind to 0) the VBO
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		useVBO = true;
+		this.triangles = null;
+		this.coord2DTexture = null;
+		this.elements = null;
+		this.vertexArray = null;
 
 	}
 

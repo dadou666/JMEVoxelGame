@@ -21,7 +21,6 @@ public class Terrain implements Serializable {
 	public int dim;
 	public int nbSimplification = 0;
 
-
 	public java.util.Random random = new java.util.Random();
 
 	public void simplifier() {
@@ -87,6 +86,23 @@ public class Terrain implements Serializable {
 
 	}
 
+	public Terrain(Terrain base, int n) {
+		grille = new int[base.dim * n][base.dim * n];
+		for (int ix = 0; ix < n; ix++) {
+			for (int iy = 0; iy < n; iy++) {
+				for (int x = 0; x < base.dim; x++) {
+					for (int y = 0; y < base.dim; y++) {
+						grille[ix * base.dim + x][iy * base.dim + y] = base.grille[x][y];
+					}
+				}
+				System.out.println(" ix="+ix+" iy="+iy);
+			}
+		}
+		dim = base.dim *n;
+		this.maxValue = base.maxValue;
+
+	}
+
 	public Terrain(int n, int maxValue) {
 		this.maxValue = maxValue;
 
@@ -107,18 +123,18 @@ public class Terrain implements Serializable {
 			for (int dy = -1; dy <= 1; dy++) {
 				int px = x + dx;
 				if (px == dim) {
-					px=0;
+					px = 0;
 				}
-				
+
 				int py = y + dy;
 				if (py == dim) {
-					py=0;
+					py = 0;
 				}
 				if (px < 0) {
-					px=dim-1;
+					px = dim - 1;
 				}
-				if (py <0) {
-					py=dim-1;
+				if (py < 0) {
+					py = dim - 1;
 				}
 				if (px >= 0 && py >= 0 && px < dim && py < dim) {
 					if (r == null) {

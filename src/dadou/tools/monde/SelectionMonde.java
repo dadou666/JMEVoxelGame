@@ -73,15 +73,14 @@ public class SelectionMonde extends EtatBrickEditor implements GestionListeContr
 
 	}
 
-	public DecorDeBriqueDataElement charger() throws FileNotFoundException, ClassNotFoundException, IOException {
-		return DecorDeBriqueDataElement.charger(BrickEditor.cheminRessources + "/" + this.nom);
+	
 
-	}
-
+	@SuppressWarnings("static-access")
 	public void chargerMonde() throws FileNotFoundException, ClassNotFoundException, IOException, CouleurErreur {
-		this.BrickEditor.decor.DecorDeBriqueData.cameraPosition = BrickEditor.scc.creerCameraPosition();
-		DecorDeBriqueDataElement data = charger();
-		this.BrickEditor.chargeur.init(this.BrickEditor, data);
+
+	
+		this.BrickEditor.chargeur.init(BrickEditor, BrickEditor.cheminRessources + "/" + this.nom);
+		this.BrickEditor.chargeur.decor.DecorDeBriqueData.cameraPosition = BrickEditor.scc.creerCameraPosition();
 		// this.BrickEditor.decor.initMonde(this.BrickEditor, data);
 
 	}

@@ -501,9 +501,10 @@ public class BrickEditor implements Comportement {
 	public Key flecheDroite = new Key(Keyboard.KEY_RIGHT);
 	public boolean sautForce = false;
 	public int hauteurSautForce = hauteurSautMax;
+	public Terrain terrain;
 
 	public boolean corrigerHauteurSiTerrain() {
-		Terrain terrain = this.decor.DecorDeBriqueData.terrain;
+	
 
 		if (terrain != null) {
 			float dimX = decor.DecorDeBriqueData.decorInfo.nbCube;
@@ -1333,7 +1334,7 @@ public class BrickEditor implements Comportement {
 			// this.espace = null;
 			FBOShadowMap.shadowMap = null;
 		}
-		DecorDeBriqueDataElement data = DecorDeBriqueDataElement.charger(cheminRessources + "/" + nomMonde);
+	
 		if (espace != null) {
 			espace.reset();
 			espace.vider();
@@ -1345,7 +1346,7 @@ public class BrickEditor implements Comportement {
 				arbreCameraPositions.creerListePositionCamera(null);
 			}
 			if (chargeur != null) {
-				chargeur.init(this, data);
+				chargeur.init(this, cheminRessources + "/" + nomMonde);
 			}
 
 		} catch (Exception e1) {
@@ -1881,10 +1882,9 @@ public class BrickEditor implements Comportement {
 			this.mondeInterface.nomMonde = SelectionMonde.nom;
 		}
 		if (this.mondeInterface.sauvegardeMonde != null) {
-			this.chargeur.init(this, DecorDeBriqueDataElement
-					.charger(BrickEditor.cheminRessources + "/" + this.mondeInterface.sauvegardeJoueur.mondeEnCours));
+			this.chargeur.init(this, BrickEditor.cheminRessources + "/" + this.mondeInterface.sauvegardeJoueur.mondeEnCours);
 		} else {
-			this.chargeur.init(this, SelectionMonde.charger());
+			SelectionMonde.chargerMonde();
 		}
 		chargeur.creerIHM();
 		decor = null;
@@ -1943,7 +1943,7 @@ public class BrickEditor implements Comportement {
 
 		be.chargeur = new ChargeurDecor();
 
-		be.chargeur.init(be, DecorDeBriqueDataElement.charger(BrickEditor.cheminRessources + "/" + j.nomMonde));
+		be.chargeur.init(be, BrickEditor.cheminRessources + "/" + j.nomMonde);
 
 		while (!be.mondeInterface.exit) {
 			if (be.chargeur.decor != null) {

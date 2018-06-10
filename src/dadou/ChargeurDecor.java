@@ -3,7 +3,9 @@ package dadou;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 import dadou.VoxelTexture3D.CouleurErreur;
@@ -12,10 +14,11 @@ import dadou.ihm.IHM;
 import dadou.ihm.IHMModel;
 import dadou.ihm.Widget;
 import dadou.tools.BrickEditor;
+import dadou.tools.SerializeTool;
 import dadou.tools.graphics.Config;
 
 public class ChargeurDecor {
-	public ChargeurElementDecor ChargeurElementDecor;
+	public ChargeurElementDecor _ChargeurElementDecor;
 	public DecorDeBrique decor;
 	public BrickEditor g;
 	public Widget progression;
@@ -25,38 +28,69 @@ public class ChargeurDecor {
 	int total;
 	int avancement = 0;
 	DecorDeBriqueDataElement data;
+	ObjectInputStream ois;
 
-	public void init(BrickEditor g, DecorDeBriqueDataElement data)
-			throws ClassNotFoundException, IOException, CouleurErreur {
+	public void chargementSuivant() throws ClassNotFoundException, IOException {
+
+		if (ois != null) {
+			if (avancement == total) {
+				_ChargeurElementDecor = null;
+				return;
+			}
+			try {
+				ElementDecor ed = (ElementDecor) ois.readObject();
+				_ChargeurElementDecor = decor.creerChargeurElementDecor(g, ed);
+				if (avancement%100 ==0 ) {
+				Log.print(" chargement ed flux "+avancement +" / "+total); }
+			} catch (java.io.EOFException eof) {
+
+			}
+			return;
+
+		}
+		_ChargeurElementDecor = _ChargeurElementDecor.suivant;
+	}
+
+	public void init(BrickEditor g, String nomFichier) throws ClassNotFoundException, IOException, CouleurErreur {
+		Log.print("changement "+nomFichier);
+		this.data = DecorDeBriqueDataElement.charger(nomFichier);
+		if (new File(nomFichier + ".flx").exists()) {
+			Log.print("changement "+nomFichier+".flx");
+			this.ois = SerializeTool.readAsStream(nomFichier + ".flx");
+
+		}
 		decor = new DecorDeBrique(g, data.decorInfo.niveau);
 		if (g.game != null) {
 			decor.action.nomSkyBox = data.skyBox;
 		}
-		this.data = data;
+	
 		decor.creerChargeurDecor(this, g, data);
 
 		if (data.imageEcran != null) {
 			data.imageEcran.init(g.game.shaderWidget);
 		} else if (g.decorDeBriqueData.imageEcran != null) {
+
 			g.decorDeBriqueData.imageEcran.init(g.game.shaderWidget);
 		}
-
-		decor.gestionCollision = new GestionCollision(decor,
-				data.decorInfo.niveau + 4, 1);
+		Log.print(" creation gestion collision ");
+		decor.gestionCollision = new GestionCollision(decor, data.decorInfo.niveau + 4, 1);
+		Log.print(" creation gestion collision fin");
 		int nbCube = 0;
-		for (int hx = 0; hx < data.decorInfo.nbCube; hx++) {
-			for (int hy = 0; hy < data.decorInfo.nbCube; hy++) {
-				for (int hz = 0; hz < data.decorInfo.nbCube; hz++) {
-					Color c = decor.lireCouleur(hx, hy, hz);
-					if (!ElementDecor.estVide(c)) {
-						nbCube++;
+		/*if (decor.DecorDeBriqueData.elementsDecor != null) {
+			for (int hx = 0; hx < data.decorInfo.nbCube; hx++) {
+				for (int hy = 0; hy < data.decorInfo.nbCube; hy++) {
+					for (int hz = 0; hz < data.decorInfo.nbCube; hz++) {
+						Color c = decor.lireCouleur(hx, hy, hz);
+						if (!ElementDecor.estVide(c)) {
+							nbCube++;
+						}
+
 					}
 
 				}
 
 			}
-
-		}
+		}*/
 		Log.print("chargement " + nbCube + " decor=" + decor);
 	}
 
@@ -127,9 +161,8 @@ public class ChargeurDecor {
 		if (decor == null) {
 			return;
 		}
-		avancement++;
 
-		if (this.ChargeurElementDecor == null) {
+		if (this._ChargeurElementDecor == null) {
 
 			if (g.espace != null) {
 				g.espace.clear();
@@ -146,12 +179,10 @@ public class ChargeurDecor {
 			decor.initialiserModelInstances(g);
 
 			this.g.mondeInterface.initJoueurs();
-			g.config = new Config(g.game,
-					decor.DecorDeBriqueData.getConfigValues());
+			g.config = new Config(g.game, decor.DecorDeBriqueData.getConfigValues());
 			g.config.BrickEditor = g;
 			if (g.swingEditor != null) {
-				Game.profondeur = g.config.config.profondeur
-						* g.config.config.profondeur;
+				Game.profondeur = g.config.config.profondeur * g.config.config.profondeur;
 			}
 
 			if (this.g.swingEditor != null && !this.g.mondeInterface.active) {
@@ -164,9 +195,18 @@ public class ChargeurDecor {
 			return;
 
 		}
-		ChargeurElementDecor.charger(decor);
-
-		ChargeurElementDecor = ChargeurElementDecor.suivant;
+		
+		_ChargeurElementDecor.charger(decor);
+		avancement++;
+		try {
+			this.chargementSuivant();
+		} catch (ClassNotFoundException e) {
+			_ChargeurElementDecor = null;
+			e.printStackTrace();
+		} catch (IOException e) {
+			_ChargeurElementDecor = null;
+			e.printStackTrace();
+		}
 
 	}
 

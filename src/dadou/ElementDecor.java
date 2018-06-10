@@ -15,6 +15,7 @@ import com.jme.math.Vector3f;
 import com.jme.renderer.Camera;
 
 import dadou.VoxelTexture3D.CouleurErreur;
+import terrain.ParcelTerrain;
 import terrain.Terrain;
 
 public class ElementDecor implements Serializable {
