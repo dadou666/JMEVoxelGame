@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import dadou.VoxelTexture3D.CouleurErreur;
 import dadou.collision.GestionCollision;
@@ -37,14 +38,14 @@ public class ChargeurDecor {
 				_ChargeurElementDecor = null;
 				return;
 			}
-			try {
-				ElementDecor ed = (ElementDecor) ois.readObject();
-				_ChargeurElementDecor = decor.creerChargeurElementDecor(g, ed);
-				if (avancement%100 ==0 ) {
-				Log.print(" chargement ed flux "+avancement +" / "+total); }
-			} catch (java.io.EOFException eof) {
 
+			ElementDecor ed = (ElementDecor) this.ois.readObject();
+
+			_ChargeurElementDecor = decor.creerChargeurElementDecor(g, ed);
+			if (avancement % 100 == 0) {
+				Log.print(" chargement ed flux " + avancement + " / " + total);
 			}
+
 			return;
 
 		}
@@ -52,19 +53,22 @@ public class ChargeurDecor {
 	}
 
 	public void init(BrickEditor g, String nomFichier) throws ClassNotFoundException, IOException, CouleurErreur {
-		Log.print("changement "+nomFichier);
+		Log.print("changement " + nomFichier);
 		this.data = DecorDeBriqueDataElement.charger(nomFichier);
-		if (new File(nomFichier + ".flx").exists()) {
-			Log.print("changement "+nomFichier+".flx");
-			this.ois = SerializeTool.readAsStream(nomFichier + ".flx");
-
-		}
 		decor = new DecorDeBrique(g, data.decorInfo.niveau);
 		if (g.game != null) {
 			decor.action.nomSkyBox = data.skyBox;
 		}
-	
+
 		decor.creerChargeurDecor(this, g, data);
+		if (new File(nomFichier + ".flx").exists()) {
+			Log.print("changement " + nomFichier + ".flx");
+			this.ois = SerializeTool.readAsStream(nomFichier + ".flx");
+			ElementDecor ed = (ElementDecor) this.ois.readObject();
+
+			this._ChargeurElementDecor = decor.creerChargeurElementDecor(g, ed);
+
+		}
 
 		if (data.imageEcran != null) {
 			data.imageEcran.init(g.game.shaderWidget);
@@ -76,21 +80,18 @@ public class ChargeurDecor {
 		decor.gestionCollision = new GestionCollision(decor, data.decorInfo.niveau + 4, 1);
 		Log.print(" creation gestion collision fin");
 		int nbCube = 0;
-		/*if (decor.DecorDeBriqueData.elementsDecor != null) {
-			for (int hx = 0; hx < data.decorInfo.nbCube; hx++) {
-				for (int hy = 0; hy < data.decorInfo.nbCube; hy++) {
-					for (int hz = 0; hz < data.decorInfo.nbCube; hz++) {
-						Color c = decor.lireCouleur(hx, hy, hz);
-						if (!ElementDecor.estVide(c)) {
-							nbCube++;
-						}
-
-					}
-
-				}
-
-			}
-		}*/
+		/*
+		 * if (decor.DecorDeBriqueData.elementsDecor != null) { for (int hx = 0; hx <
+		 * data.decorInfo.nbCube; hx++) { for (int hy = 0; hy < data.decorInfo.nbCube;
+		 * hy++) { for (int hz = 0; hz < data.decorInfo.nbCube; hz++) { Color c =
+		 * decor.lireCouleur(hx, hy, hz); if (!ElementDecor.estVide(c)) { nbCube++; }
+		 * 
+		 * }
+		 * 
+		 * }
+		 * 
+		 * } }
+		 */
 		Log.print("chargement " + nbCube + " decor=" + decor);
 	}
 
@@ -195,7 +196,7 @@ public class ChargeurDecor {
 			return;
 
 		}
-		
+
 		_ChargeurElementDecor.charger(decor);
 		avancement++;
 		try {
@@ -219,4 +220,5 @@ public class ChargeurDecor {
 		}
 		this.ihm.dessiner(shader);
 	}
+
 }

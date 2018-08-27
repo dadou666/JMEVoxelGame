@@ -61,6 +61,7 @@ public class ParcelTerrain implements Serializable {
 		}
 	}
 
+
 	public void initVBO(BrickEditor editor) {
 	
 
@@ -95,6 +96,7 @@ public class ParcelTerrain implements Serializable {
 			// System.out.println(" ok");
 		}
 		vbo.createVBO();
+		triangles = null;
 
 	}
 

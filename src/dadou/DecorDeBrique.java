@@ -218,11 +218,12 @@ public class DecorDeBrique {
 
 		DecorDeBriqueData = data;
 		if (data.elementsDecor == null) {
+			
 			Log.print("init element decor");
 			this.initElementDecor();
 			r.total = data.nbElementFlux;
 			Log.print("creer chargeur decor ");
-			r._ChargeurElementDecor = this.creerChargeurElementDecor(g, (ElementDecor) r.ois.readObject());
+		
 	
 		} else {
 

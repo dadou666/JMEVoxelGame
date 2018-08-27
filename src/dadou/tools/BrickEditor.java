@@ -650,6 +650,9 @@ public class BrickEditor implements Comportement {
 			scc.calculerBox(cam, vc);
 			hauteur--;
 			hauteurSaut += deltatSaut;
+			if ( this.corrigerHauteurSiTerrain() )  {
+			//	hauteur = 0;
+			}
 
 			if ((mondeInterface.active)) {
 				AbstractJoueur aj = mondeInterface.joueur.aj;
